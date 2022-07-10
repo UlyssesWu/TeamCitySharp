@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6</TargetFrameworks>
     <Version>2.0.16</Version>
   </PropertyGroup>
   <!-- .NET Standard 2.0 references, compilation flags and build options -->
@@ -8,7 +8,7 @@
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <!-- .NET Standard 3.1 references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
