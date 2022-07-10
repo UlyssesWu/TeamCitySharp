@@ -33,7 +33,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(Href, ref currentFields, "href");
       FieldHelper.AddFieldGroup(Agent,ref currentFields);

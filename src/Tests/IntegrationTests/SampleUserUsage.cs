@@ -18,6 +18,7 @@ namespace TeamCitySharp.IntegrationTests
         private readonly bool m_useSsl;
         private readonly string m_username;
         private readonly string m_password;
+        private readonly string m_token;
 
 
         public when_interacting_to_get_user_information()
@@ -26,13 +27,15 @@ namespace TeamCitySharp.IntegrationTests
             bool.TryParse(ConfigurationManager.AppSettings["UseSsl"], out m_useSsl);
             m_username = ConfigurationManager.AppSettings["Username"];
             m_password = ConfigurationManager.AppSettings["Password"];
+            m_token = ConfigurationManager.AppSettings["Token"];
         }
 
         [SetUp]
         public void SetUp()
         {
             m_client = new TeamCityClient(m_server, m_useSsl);
-            m_client.Connect(m_username, m_password);
+            //m_client.Connect(m_username, m_password);
+            m_client.ConnectWithAccessToken(m_token);
         }
 
         [Test]

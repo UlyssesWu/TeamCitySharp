@@ -41,7 +41,7 @@ namespace TeamCitySharp.ActionTypes
       return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
     }
 
-    public List<Build> ByBuildLocator(BuildLocator locator, List<String> param)
+    public List<Build> ByBuildLocator(BuildLocator locator, List<string> param)
     {
       var strParam = GetParamLocator(param);
       var buildWrapper =
@@ -51,7 +51,7 @@ namespace TeamCitySharp.ActionTypes
       return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
     }
 
-    public Build LastBuildByAgent(string agentName, List<String> param = null)
+    public Build LastBuildByAgent(string agentName, List<string> param = null)
     {
       return ByBuildLocator(BuildLocator.WithDimensions(agentName: agentName, maxResults: 1),param).SingleOrDefault();
     }
@@ -62,7 +62,7 @@ namespace TeamCitySharp.ActionTypes
     }
 
 
-    public List<Build> SuccessfulBuildsByBuildConfigId(string buildConfigId, List<String> param = null)
+    public List<Build> SuccessfulBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
           status: BuildStatus.SUCCESS
@@ -70,7 +70,7 @@ namespace TeamCitySharp.ActionTypes
     }
 
 
-    public Build LastSuccessfulBuildByBuildConfigId(string buildConfigId, List<String> param = null)
+    public Build LastSuccessfulBuildByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                               status: BuildStatus.SUCCESS,
@@ -79,14 +79,14 @@ namespace TeamCitySharp.ActionTypes
       return builds != null ? builds.FirstOrDefault() : new Build();
     }
 
-    public List<Build> FailedBuildsByBuildConfigId(string buildConfigId, List<String> param = null)
+    public List<Build> FailedBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                         status: BuildStatus.FAILURE
                               ),param);
     }
 
-    public Build LastFailedBuildByBuildConfigId(string buildConfigId, List<String> param = null)
+    public Build LastFailedBuildByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                               status: BuildStatus.FAILURE,
@@ -95,7 +95,7 @@ namespace TeamCitySharp.ActionTypes
       return builds != null ? builds.FirstOrDefault() : new Build();
     }
 
-    public Build LastBuildByBuildConfigId(string buildConfigId, List<String> param = null)
+    public Build LastBuildByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                               maxResults: 1
@@ -103,14 +103,14 @@ namespace TeamCitySharp.ActionTypes
       return builds != null ? builds.FirstOrDefault() : new Build();
     }
 
-    public List<Build> ErrorBuildsByBuildConfigId(string buildConfigId, List<String> param = null)
+    public List<Build> ErrorBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                         status: BuildStatus.ERROR
                               ),param);
     }
 
-    public Build LastErrorBuildByBuildConfigId(string buildConfigId, List<String> param = null)
+    public Build LastErrorBuildByBuildConfigId(string buildConfigId, List<string> param = null)
     {
       var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                                                               status: BuildStatus.ERROR,
@@ -119,7 +119,7 @@ namespace TeamCitySharp.ActionTypes
       return builds != null ? builds.FirstOrDefault() : new Build();
     }
 
-    public List<Build> ByBuildConfigId(string buildConfigId, List<String> param)
+    public List<Build> ByBuildConfigId(string buildConfigId, List<string> param)
     {
       return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId)), param);
     }

@@ -13,13 +13,13 @@ namespace TeamCitySharp.Connection
 
     void GetFormat(string urlPart, params object[] parts);
 
-    T PostFormat<T>(object data, string contenttype, string accept, string urlPart, params object[] parts);
+    T PostFormat<T>(object data, string contentType, string accept, string urlPart, params object[] parts);
 
-    void PostFormat(object data, string contenttype, string urlPart, params object[] parts);
+    void PostFormat(object data, string contentType, string urlPart, params object[] parts);
 
-    T PutFormat<T>(object data, string contenttype, string accept, string urlPart, params object[] parts);
+    T PutFormat<T>(object data, string contentType, string accept, string urlPart, params object[] parts);
 
-    void PutFormat(object data, string contenttype, string urlPart, params object[] parts);
+    void PutFormat(object data, string contentType, string urlPart, params object[] parts);
 
     void DeleteFormat(string urlPart, params object[] parts);
 

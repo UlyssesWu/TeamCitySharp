@@ -37,7 +37,7 @@ namespace TeamCitySharp.IntegrationTests
       bool.TryParse(ConfigurationManager.AppSettings["UseSsl"], out m_useSsl);
       m_username = ConfigurationManager.AppSettings["Username"];
       m_password = ConfigurationManager.AppSettings["Password"];
-      m_token = ConfigurationManager.AppSettings["Password"];
+      m_token = ConfigurationManager.AppSettings["Token"];
       m_goodBuildConfigId = ConfigurationManager.AppSettings["GoodBuildConfigId"];
       m_goodProjectId = ConfigurationManager.AppSettings["GoodProjectId"];
       m_goodTemplateId = ConfigurationManager.AppSettings["GoodTemplateId"];
@@ -47,7 +47,8 @@ namespace TeamCitySharp.IntegrationTests
     public void SetUp()
     {
       m_client = new TeamCityClient(m_server, m_useSsl);
-      m_client.Connect(m_username, m_password);
+      //m_client.Connect(m_username, m_password);
+      m_client.ConnectWithAccessToken(m_token);
     }
 
     [Test]

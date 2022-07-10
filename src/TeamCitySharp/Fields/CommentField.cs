@@ -36,7 +36,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(Timestamp, ref currentFields, "count");
       FieldHelper.AddField(Text, ref currentFields, "href");

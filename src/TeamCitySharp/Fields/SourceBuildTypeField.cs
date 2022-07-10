@@ -97,7 +97,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(Running, ref currentFields, "running");
       FieldHelper.AddField(Pinned, ref currentFields, "pinned");

@@ -47,7 +47,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(Username, ref currentFields, "username");
       FieldHelper.AddField(Name, ref currentFields, "name");

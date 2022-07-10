@@ -86,7 +86,7 @@ namespace TeamCitySharp.ActionTypes
 
     private static string ToCamelCase(string s)
     {
-      return Char.ToLower(s.ToCharArray()[0]) + s.Substring(1);
+      return char.ToLower(s.ToCharArray()[0]) + s.Substring(1);
     }
   }
 }

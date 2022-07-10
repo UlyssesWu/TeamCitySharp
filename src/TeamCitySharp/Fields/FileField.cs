@@ -33,7 +33,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(BeforeRevision, ref currentFields, "before-revision");
       FieldHelper.AddField(AfterRevision, ref currentFields, "after-revision");

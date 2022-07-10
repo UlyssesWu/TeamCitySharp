@@ -62,7 +62,7 @@ namespace TeamCitySharp.Fields
 
     public override string ToString()
     {
-      var currentFields = String.Empty;
+      var currentFields = string.Empty;
 
       FieldHelper.AddField(PercentageComplete, ref currentFields, "percentageComplete");
       FieldHelper.AddField(ElapsedSeconds, ref currentFields, "elapsedSeconds");
