@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace TeamCitySharp.Connection
@@ -17,15 +18,23 @@ namespace TeamCitySharp.Connection
             return FromJson<T>(stringContent);
         }
 
+        public static async Task<T> StaticBodyAsync<T>(this HttpResponseMessage src)
+        {
+            var stringContent = await src.Content.ReadAsStringAsync();
+            return FromJson<T>(stringContent);
+        }
+
+        private static JsonSerializerSettings _jsonSettings;
+
         public static T FromJson<T>(this string src)
         {
-            var jsonSerializerSettings = new JsonSerializerSettings
+            _jsonSettings ??= new JsonSerializerSettings
             {
                 DateFormatString = "yyyyMMdd'T'HHmmssK",
                 Culture = CultureInfo.CurrentCulture
             };
 
-            return JsonConvert.DeserializeObject<T>(src, jsonSerializerSettings);
+            return JsonConvert.DeserializeObject<T>(src, _jsonSettings);
         }
     }
 }

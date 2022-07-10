@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
+using System.Threading.Tasks;
 using TeamCitySharp.DomainEntities;
 using File = System.IO.File;
 
@@ -57,6 +58,11 @@ namespace TeamCitySharp.Connection
         public T GetFormat<T>(string urlPart, params object[] parts)
         {
             return Get<T>(string.Format(urlPart, parts));
+        }
+        
+        public async Task<T> GetFormatAsync<T>(string urlPart, params object[] parts)
+        {
+            return await GetAsync<T>(string.Format(urlPart, parts));
         }
 
         public void GetFormat(string urlPart, params object[] parts)
@@ -146,6 +152,13 @@ namespace TeamCitySharp.Connection
             return response.StaticBody<T>();
         }
 
+        public async Task<T> GetAsync<T>(string urlPart)
+        {
+            var response = await GetResponseAsync(urlPart);
+            ThrowIfHttpError(response, urlPart);
+            return await response.StaticBodyAsync<T>();
+        }
+
         public void Get(string urlPart)
         {
             GetResponse(urlPart);
@@ -165,6 +178,19 @@ namespace TeamCitySharp.Connection
                 CreateHttpClient(HttpContentTypes.ApplicationJson).Get(url);
             ThrowIfHttpError(response, url);
             return response;
+        }
+
+        private async Task<HttpResponseMessage> GetResponseAsync(string urlPart)
+        {
+            if (CheckForAuthRequest())
+                throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+
+            if (string.IsNullOrEmpty(urlPart))
+                throw new ArgumentException("Url must be specified");
+
+            var url = CreateUrl(urlPart);
+            var httpClient = CreateHttpClient(HttpContentTypes.ApplicationJson);
+            return await httpClient.GetAsync(url);
         }
 
         public T Post<T>(object data, string contentType, string urlPart, string accept)
@@ -233,6 +259,16 @@ namespace TeamCitySharp.Connection
 
             return response;
         }
+        private async Task<HttpResponseMessage> MakePostRequestAsync(object data, string contentType, string urlPart, string accept)
+        {
+            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
+
+            var url = CreateUrl(urlPart);
+            var response = await client.PostAsync(url, data, contentType);
+            ThrowIfHttpError(response, url);
+
+            return response;
+        }
 
         private HttpResponseMessage MakePutRequest(object data, string contentType, string urlPart, string accept)
         {
@@ -294,7 +330,7 @@ namespace TeamCitySharp.Connection
             var httpClient = m_client;
 
             if (m_useNoCache)
-                httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
+                httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue {NoCache = true};
 
             if (m_credentials.ActAsGuest)
             {
@@ -408,5 +444,100 @@ namespace TeamCitySharp.Connection
             string urlPart = nextHref.Substring(reg.Match(nextHref).Value.Length);
             return Get<T>(urlPart);
         }
+
+        public async Task<T> GetNextHrefAsync<T>(string nextHref)
+        {
+            var reg = new System.Text.RegularExpressions.Regex(@"\/(guestAuth|httpAuth)(\/app\/rest)?(\/\d+.\d+)?");
+            string urlPart = nextHref.Substring(reg.Match(nextHref).Value.Length);
+            return await GetAsync<T>(urlPart);
+        }
+
+        #region Async Methods
+
+
+
+
+        public async Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> DeleteFormatAsync<T>(string urlPart, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> PostAsync<T>(object data, string contentType, string urlPart, string accept)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> PutAsync<T>(object data, string contentType, string urlPart, string accept)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> DeleteAsync<T>(string urlPart)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> GetRawAsync<T>(string urlPart)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> GetRawAsync<T>(string urlPart, bool rest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> GetBooleanAsync(string urlPart, params object[] parts)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        public async Task<T> GetNextHrefAsync<T>(string nextHref, bool rest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> AuthenticateAsync(string urlPart, bool throwExceptionOnHttpError = true)
+        {
+            try
+            {
+                var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+                var response = await httpClient.GetAsync(CreateUrl(urlPart));
+                if (response.StatusCode != HttpStatusCode.OK && throwExceptionOnHttpError)
+                {
+                    throw new AuthenticationException();
+                }
+
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+            catch (HttpException exception)
+            {
+                throw new AuthenticationException(exception.StatusDescription);
+            }
+        }
+
+        #endregion
     }
 }

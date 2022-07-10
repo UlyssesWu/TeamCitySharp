@@ -30,6 +30,19 @@ namespace TeamCitySharp.Connection
             return src.PostAsync(url, content).GetAwaiter().GetResult();
         }
 
+        public static async Task<HttpResponseMessage> PostAsync(this HttpClient src, string url, object body, string contentType)
+        {
+            StringContent content = null;
+            if (body != null)
+            {
+                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
+
+                content = new StringContent(data, Encoding.UTF8, contentType);
+            }
+
+            return await src.PostAsync(url, content);
+        }
+
         public static HttpResponseMessage Put(this HttpClient src, string url, object body, string contentType)
         {
             StringContent content = null;
