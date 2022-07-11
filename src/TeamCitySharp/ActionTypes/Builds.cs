@@ -58,8 +58,7 @@ namespace TeamCitySharp.ActionTypes
 
             return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
         }
-
-
+        
         public async Task<List<Build>> ByBuildLocatorAsync(BuildLocator locator, List<string> param)
         {
             var strParam = GetParamLocator(param);
@@ -75,15 +74,31 @@ namespace TeamCitySharp.ActionTypes
             return ByBuildLocator(BuildLocator.WithDimensions(agentName: agentName, maxResults: 1), param).SingleOrDefault();
         }
 
+        public async Task<Build> LastBuildByAgentAsync(string agentName, List<string> param = null)
+        {
+            return (await ByBuildLocatorAsync(BuildLocator.WithDimensions(agentName: agentName, maxResults: 1), param)).SingleOrDefault();
+        }
+
         public void Add2QueueBuildByBuildConfigId(string buildConfigId)
         {
             m_caller.GetFormat("/action.html?add2Queue={0}", buildConfigId);
         }
 
+        public async Task Add2QueueBuildByBuildConfigIdAsync(string buildConfigId)
+        {
+            await m_caller.GetFormatAsync("/action.html?add2Queue={0}", buildConfigId);
+        }
 
         public List<Build> SuccessfulBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
         {
             return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.SUCCESS
+            ), param);
+        }
+
+        public async Task<List<Build>> SuccessfulBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                 status: BuildStatus.SUCCESS
             ), param);
         }
@@ -98,6 +113,15 @@ namespace TeamCitySharp.ActionTypes
             return builds != null ? builds.FirstOrDefault() : new Build();
         }
 
+        public async Task<Build> LastSuccessfulBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            var builds = await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.SUCCESS,
+                maxResults: 1
+            ), param);
+            return builds != null ? builds.FirstOrDefault() : new Build();
+        }
+
         public List<Build> FailedBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
         {
             return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
@@ -105,9 +129,25 @@ namespace TeamCitySharp.ActionTypes
             ), param);
         }
 
+        public async Task<List<Build>> FailedBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.FAILURE
+            ), param);
+        }
+
         public Build LastFailedBuildByBuildConfigId(string buildConfigId, List<string> param = null)
         {
             var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.FAILURE,
+                maxResults: 1
+            ), param);
+            return builds != null ? builds.FirstOrDefault() : new Build();
+        }
+
+        public async Task<Build> LastFailedBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            var builds = await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                 status: BuildStatus.FAILURE,
                 maxResults: 1
             ), param);
@@ -122,6 +162,14 @@ namespace TeamCitySharp.ActionTypes
             return builds != null ? builds.FirstOrDefault() : new Build();
         }
 
+        public async Task<Build> LastBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            var builds = await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                maxResults: 1
+            ), param);
+            return builds != null ? builds.FirstOrDefault() : new Build();
+        }
+
         public List<Build> ErrorBuildsByBuildConfigId(string buildConfigId, List<string> param = null)
         {
             return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
@@ -129,9 +177,25 @@ namespace TeamCitySharp.ActionTypes
             ), param);
         }
 
+        public async Task<List<Build>> ErrorBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.ERROR
+            ), param);
+        }
+
         public Build LastErrorBuildByBuildConfigId(string buildConfigId, List<string> param = null)
         {
             var builds = ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
+                status: BuildStatus.ERROR,
+                maxResults: 1
+            ), param);
+            return builds != null ? builds.FirstOrDefault() : new Build();
+        }
+
+        public async Task<Build> LastErrorBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        {
+            var builds = await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId),
                 status: BuildStatus.ERROR,
                 maxResults: 1
             ), param);
@@ -155,9 +219,22 @@ namespace TeamCitySharp.ActionTypes
             return build ?? new Build();
         }
 
+        public async Task<Build> ByIdAsync(string id)
+        {
+            var build = await m_caller.GetFormatAsync<Build>(ActionHelper.CreateFieldUrl("/builds/id:{0}", m_fields), id);
+
+            return build ?? new Build();
+        }
+
         public List<Build> ByBuildConfigId(string buildConfigId)
         {
             return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId)
+            ));
+        }
+
+        public async Task<List<Build>> ByBuildConfigIdAsync(string buildConfigId)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId)
             ));
         }
 
@@ -165,6 +242,12 @@ namespace TeamCitySharp.ActionTypes
         {
             return ByBuildLocator(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId)),
                 new List<string> {"running:true"});
+        }
+
+        public async Task<List<Build>> RunningByBuildConfigIdAsync(string buildConfigId)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(BuildTypeLocator.WithId(buildConfigId)),
+                new List<string> { "running:true" });
         }
 
         public List<Build> ByConfigIdAndTag(string buildConfigId, string tag)
@@ -217,10 +300,26 @@ namespace TeamCitySharp.ActionTypes
             return ByBuildLocator(BuildLocator.WithDimensions(sinceDate: date), param);
         }
 
+        public async Task<List<Build>> AllSinceDateAsync(DateTime date, long count = 100, List<string> param = null)
+        {
+            param ??= new List<string> { "defaultFilter:false" };
+
+            param.Add($"count({count})");
+
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(sinceDate: date), param);
+        }
+
         public List<Build> AllRunningBuild()
         {
             var buildWrapper =
                 m_caller.GetFormat<BuildWrapper>(ActionHelper.CreateFieldUrl("/builds?locator=running:true", m_fields));
+            return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
+        }
+
+        public async Task<List<Build>> AllRunningBuildAsync()
+        {
+            var buildWrapper =
+                await m_caller.GetFormatAsync<BuildWrapper>(ActionHelper.CreateFieldUrl("/builds?locator=running:true", m_fields));
             return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
         }
 
@@ -229,14 +328,31 @@ namespace TeamCitySharp.ActionTypes
             return ByBuildLocator(BuildLocator.WithDimensions(branch: branchName));
         }
 
+        public async Task<List<Build>> ByBranchAsync(string branchName)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(branch: branchName));
+        }
+
         public List<Build> AllBuildsOfStatusSinceDate(DateTime date, BuildStatus buildStatus)
         {
             return ByBuildLocator(BuildLocator.WithDimensions(sinceDate: date, status: buildStatus));
         }
 
+        public async Task<List<Build>> AllBuildsOfStatusSinceDateAsync(DateTime date, BuildStatus buildStatus)
+        {
+            return await ByBuildLocatorAsync(BuildLocator.WithDimensions(sinceDate: date, status: buildStatus));
+        }
+
         public List<Build> NonSuccessfulBuildsForUser(string userName)
         {
             var builds = ByUserName(userName);
+
+            return builds?.Where(b => b.Status != "SUCCESS").ToList();
+        }
+
+        public async Task<List<Build>> NonSuccessfulBuildsForUserAsync(string userName)
+        {
+            var builds = await ByUserNameAsync(userName);
 
             return builds?.Where(b => b.Status != "SUCCESS").ToList();
         }
@@ -253,6 +369,15 @@ namespace TeamCitySharp.ActionTypes
                 buildId, param);
         }
 
+        public async Task<List<Build>> RetrieveEntireBuildChainFromAsync(string buildId, bool includeInitial = true, List<string> param = null)
+        {
+            var strIncludeInitial = includeInitial ? "true" : "false";
+            param ??= new List<string> { "defaultFilter:false" };
+
+            return await GetBuildListQueryAsync("/builds?locator=snapshotDependency:(from:(id:{0}),includeInitial:" + strIncludeInitial + "){1}",
+                buildId, param);
+        }
+
         public List<Build> RetrieveEntireBuildChainTo(string buildId, bool includeInitial = true, List<string> param = null)
         {
             var strIncludeInitial = includeInitial ? "true" : "false";
@@ -262,6 +387,15 @@ namespace TeamCitySharp.ActionTypes
             }
 
             return GetBuildListQuery("/builds?locator=snapshotDependency:(to:(id:{0}),includeInitial:" + strIncludeInitial + "){1}",
+                buildId, param);
+        }
+
+        public async Task<List<Build>> RetrieveEntireBuildChainToAsync(string buildId, bool includeInitial = true, List<string> param = null)
+        {
+            var strIncludeInitial = includeInitial ? "true" : "false";
+            param ??= new List<string> { "defaultFilter:false" };
+
+            return await GetBuildListQueryAsync("/builds?locator=snapshotDependency:(to:(id:{0}),includeInitial:" + strIncludeInitial + "){1}",
                 buildId, param);
         }
 
@@ -280,6 +414,14 @@ namespace TeamCitySharp.ActionTypes
                 buildId, param);
         }
 
+        public async Task<List<Build>> NextBuildsAsync(string buildId, long count = 100, List<string> param = null)
+        {
+            param ??= new List<string> { "defaultFilter:false" };
+            param.Add($"count({count})");
+            return await GetBuildListQueryAsync("/builds?locator=sinceBuild:(id:{0}),count(" + count + "){1}",
+                buildId, param);
+        }
+
         /// <summary>
         /// Retrieves the list of build affected by a project. 
         /// 
@@ -292,6 +434,14 @@ namespace TeamCitySharp.ActionTypes
         public List<Build> AffectedProject(string projectId, long count = 100, List<string> param = null)
         {
             return GetBuildListQuery("/builds?locator=affectedProject:(id:{0}),count(" + count + "){1}",
+                projectId, param);
+        }
+
+        public async Task<List<Build>> AffectedProjectAsync(string projectId, long count = 100, List<string> param = null)
+        {
+            param ??= new List<string> { "defaultFilter:false" };
+            param.Add($"count({count})");
+            return await GetBuildListQueryAsync("/builds?locator=affectedProject:(id:{0}),count(" + count + "){1}",
                 projectId, param);
         }
 
@@ -309,6 +459,12 @@ namespace TeamCitySharp.ActionTypes
             m_caller.GetDownloadFormat(downloadHandler, url, false);
         }
 
+        public async Task DownloadLogsAsync(string projectId, bool zipped, Action<string> downloadHandler)
+        {
+            var url = $"/downloadBuildLog.html?buildId={projectId}&archived={zipped}";
+            await m_caller.GetDownloadFormatAsync(downloadHandler, url, false);
+        }
+
         /// <summary>
         /// Pin a build by build number
         /// </summary>
@@ -321,6 +477,12 @@ namespace TeamCitySharp.ActionTypes
             m_caller.PutFormat(comment, HttpContentTypes.TextPlain, urlPart, buildConfigId, buildNumber);
         }
 
+        public async Task PinBuildByBuildNumberAsync(string buildConfigId, string buildNumber, string comment)
+        {
+            const string urlPart = "/builds/buildType:{0},number:{1}/pin/";
+            await m_caller.PutFormatAsync(comment, HttpContentTypes.TextPlain, urlPart, buildConfigId, buildNumber);
+        }
+
         /// <summary>
         /// Unpin a build by build number
         /// </summary>
@@ -330,6 +492,12 @@ namespace TeamCitySharp.ActionTypes
         {
             var urlPart = $"/builds/buildType:{buildConfigId},number:{buildNumber}/pin/";
             m_caller.Delete(urlPart);
+        }
+
+        public async Task UnPinBuildByBuildNumberAsync(string buildConfigId, string buildNumber)
+        {
+            var urlPart = $"/builds/buildType:{buildConfigId},number:{buildNumber}/pin/";
+            await m_caller.DeleteAsync(urlPart);
         }
 
         #endregion
@@ -362,147 +530,20 @@ namespace TeamCitySharp.ActionTypes
             return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
         }
 
-        #endregion
-
-        #region Async Methods
-
-        //All async overloads
-
-
-
-
-
-
-
-
-        public async Task<List<Build>> ErrorBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
+        private async Task<List<Build>> GetBuildListQueryAsync(string url, string id, List<string> param = null)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> FailedBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> NextBuildsAsync(string buildId, long count = 100, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> NonSuccessfulBuildsForUserAsync(string userName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> RetrieveEntireBuildChainFromAsync(string buildConfigId, bool includeInitial = true, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> RetrieveEntireBuildChainToAsync(string buildConfigId, bool includeInitial = true, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> RunningByBuildConfigIdAsync(string buildConfigId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> SuccessfulBuildsByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Add2QueueBuildByBuildConfigIdAsync(string buildConfigId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task DownloadLogsAsync(string projectId, bool zipped, Action<string> downloadHandler)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task PinBuildByBuildNumberAsync(string buildConfigId, string buildNumber, string comment)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task UnPinBuildByBuildNumberAsync(string buildConfigId, string buildNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> ByIdAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> LastBuildByAgentAsync(string agentName, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> LastBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> LastErrorBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> LastFailedBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Build> LastSuccessfulBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Builds> GetFieldsAsync(string fields)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> AffectedProjectAsync(string projectId, long count = 100, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> AllBuildsOfStatusSinceDateAsync(DateTime date, BuildStatus buildStatus)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> AllRunningBuildAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> AllSinceDateAsync(DateTime date, long count = 100, List<string> param = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> ByBranchAsync(string branchName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Build>> ByBuildConfigIdAsync(string buildConfigId)
-        {
+            var strParam = GetParamLocator(param);
             var buildWrapper =
-                await m_caller.GetFormatAsync<BuildWrapper>(ActionHelper.CreateFieldUrl("/builds", m_fields),
-                    "buildType:" + buildConfigId);
+                await m_caller.GetFormatAsync<BuildWrapper>(
+                    ActionHelper.CreateFieldUrl(
+                        url, m_fields),
+                    id, strParam);
             return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
         }
 
+        #endregion
+
+        #region Async Methods
 
         #endregion
     }

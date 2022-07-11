@@ -48,7 +48,6 @@ namespace TeamCitySharp.ActionTypes
         Task<Build> LastErrorBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null);
         Task<Build> LastFailedBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null);
         Task<Build> LastSuccessfulBuildByBuildConfigIdAsync(string buildConfigId, List<string> param = null);
-        Task<Builds> GetFieldsAsync(string fields);
         Task<List<Build>> AffectedProjectAsync(string projectId, long count = 100, List<string> param = null);
         Task<List<Build>> AllBuildsOfStatusSinceDateAsync(DateTime date, BuildStatus buildStatus);
         Task<List<Build>> AllRunningBuildAsync();

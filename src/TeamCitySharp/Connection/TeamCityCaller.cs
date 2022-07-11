@@ -70,6 +70,11 @@ namespace TeamCitySharp.Connection
             Get(string.Format(urlPart, parts));
         }
 
+        public async Task GetFormatAsync(string urlPart, params object[] parts)
+        {
+            await GetAsync(string.Format(urlPart, parts));
+        }
+
         public T PostFormat<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
         {
             return Post<T>(data, contentType, string.Format(urlPart, parts), accept);
@@ -233,6 +238,12 @@ namespace TeamCitySharp.Connection
         public void Get(string urlPart)
         {
             GetResponse(urlPart);
+        }
+
+        public async Task GetAsync(string urlPart)
+        {
+            var response = await GetResponseAsync(urlPart);
+            ThrowIfHttpError(response, urlPart);
         }
 
         private HttpResponseMessage GetResponse(string urlPart)
