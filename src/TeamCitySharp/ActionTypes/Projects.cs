@@ -138,15 +138,15 @@ namespace TeamCitySharp.ActionTypes
       return projectName;
     }
 
-    public bool ModifParameters(string buildTypeId, string param, string value)
+    public bool ModifyParameters(string buildTypeId, string mainProjectBranch, string value)
     {
-      var url = $"/projects/id:{buildTypeId}/parameters/{param}";
+      var url = $"/projects/id:{buildTypeId}/parameters/{mainProjectBranch}";
 
       var response = m_caller.Put(value, HttpContentTypes.TextPlain, url, string.Empty);
       return response.StatusCode == HttpStatusCode.OK;
     }
 
-    public bool ModifSettings(string projectId, string setting, string value)
+    public bool ModifySettings(string projectId, string setting, string value)
     {
       var url = $"/projects/{projectId}/{setting}";
       var response = m_caller.Put(value, HttpContentTypes.TextPlain, url, string.Empty);

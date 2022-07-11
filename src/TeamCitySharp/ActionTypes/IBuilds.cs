@@ -6,10 +6,7 @@ using TeamCitySharp.Locators;
 
 namespace TeamCitySharp.ActionTypes
 {
-    public interface IBuilds
-#if ENABLE_ASYNC
-        : IBuildsAsync
-#endif
+    public interface IBuilds : IBuildsAsync
     {
         Build ById(string id);
         Build LastBuildByAgent(string agentName, List<string> param = null);

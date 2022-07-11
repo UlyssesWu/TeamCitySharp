@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace TeamCitySharp.ActionTypes
 {
-    #region New region
-
     public class Tests : ITests
     {
         #region Attributes
@@ -119,5 +117,4 @@ namespace TeamCitySharp.ActionTypes
         #endregion
     }
 
-    #endregion
 }

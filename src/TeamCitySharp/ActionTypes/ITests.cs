@@ -5,10 +5,7 @@ using TeamCitySharp.Locators;
 
 namespace TeamCitySharp.ActionTypes
 {
-    public interface ITests
-#if ENABLE_ASYNC
-        : ITestsAsync
-#endif
+    public interface ITests : ITestsAsync
     {
         TestOccurrences ByBuildLocator(BuildLocator locator);
         TestOccurrences ByProjectLocator(ProjectLocator locator);
