@@ -33,7 +33,6 @@ namespace TeamCitySharp.ActionTypes
     public interface IProjectsAsync
     {
         Task<List<Project>> AllAsync();
-        Task<Projects> GetFieldsAsync(string fields);
         Task<Project> ByNameAsync(string projectLocatorName);
         Task<Project> ByIdAsync(string projectLocatorId);
         Task<Project> DetailsAsync(Project project);
@@ -41,7 +40,6 @@ namespace TeamCitySharp.ActionTypes
         Task<Project> CreateAsync(string projectName, string sourceId, string projectId = "");
         Task<Project> MoveAsync(string projectId, string destinationId);
         Task<Project> CopyAsync(string sourceProjectId, string newProjectName, string newProjectId, string parentProjectId = "");
-        Task<string> GenerateIDAsync(string projectName);
         Task DeleteAsync(string projectName);
         Task DeleteByIdAsync(string projectId);
         Task DeleteProjectParameterAsync(string projectName, string parameterName);

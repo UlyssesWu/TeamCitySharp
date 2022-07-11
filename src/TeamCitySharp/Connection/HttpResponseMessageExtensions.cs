@@ -12,6 +12,11 @@ namespace TeamCitySharp.Connection
             return src.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 
+        public static Task<string> RawTextAsync(this HttpResponseMessage src)
+        {
+            return src.Content.ReadAsStringAsync();
+        }
+
         public static T StaticBody<T>(this HttpResponseMessage src)
         {
             var stringContent = src.Content.ReadAsStringAsync().GetAwaiter().GetResult();

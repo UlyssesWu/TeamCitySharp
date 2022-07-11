@@ -68,19 +68,19 @@ namespace TeamCitySharp.Connection
         Task<T> GetFormatAsync<T>(string urlPart, params object[] parts);
         Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts);
         Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts);
-        Task<T> DeleteFormatAsync<T>(string urlPart, params object[] parts);
-        Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, params object[] parts);
-        Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts);
+        Task PutFormatAsync(object data, string contentType, string urlPart, params object[] parts);
+        Task DeleteFormatAsync(string urlPart, params object[] parts);
+        Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, params object[] parts);
+        Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts);
         Task<T> GetAsync<T>(string urlPart);
         Task<T> PostAsync<T>(object data, string contentType, string urlPart, string accept);
+        Task<HttpResponseMessage> PostAsync(object data, string contentType, string urlPart, string accept);
         Task<T> PutAsync<T>(object data, string contentType, string urlPart, string accept);
-        Task<T> DeleteAsync<T>(string urlPart);
-        Task<T> GetRawAsync<T>(string urlPart);
-        Task<T> GetRawAsync<T>(string urlPart, bool rest);
+        Task<HttpResponseMessage> PutAsync(object data, string contentType, string urlPart, string accept);
+        Task DeleteAsync(string urlPart);
+        Task<string> GetRawAsync(string urlPart, bool rest = true);
         Task<bool> GetBooleanAsync(string urlPart, params object[] parts);
         Task<T> GetNextHrefAsync<T>(string nextHref);
-        Task<T> GetNextHrefAsync<T>(string nextHref, bool rest);
-
         Task<bool> AuthenticateAsync(string urlPart, bool throwExceptionOnHttpError = true);
 
     }

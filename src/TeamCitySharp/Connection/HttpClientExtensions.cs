@@ -56,6 +56,19 @@ namespace TeamCitySharp.Connection
             return src.PutAsync(url, content).GetAwaiter().GetResult();
         }
 
+        public static async Task<HttpResponseMessage> PutAsync(this HttpClient src, string url, object body, string contentType)
+        {
+            StringContent content = null;
+            if (body != null)
+            {
+                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
+
+                content = new StringContent(data, Encoding.UTF8, contentType);
+            }
+
+            return await src.PutAsync(url, content);
+        }
+
         public static HttpResponseMessage Delete(this HttpClient src, string url)
         {
             return src.DeleteAsync(url).GetAwaiter().GetResult();
@@ -89,6 +102,19 @@ namespace TeamCitySharp.Connection
                     return response;
                 }
             }
+        }
+
+        public static async Task<HttpResponseMessage> GetAsFileAsync(this HttpClient src, string url, string tempFilename)
+        {
+            using var response = await src.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            
+            using Stream contentStream = await response.Content.ReadAsStreamAsync(),
+                fileStream = new FileStream(tempFilename, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+            await contentStream.CopyToAsync(fileStream);
+
+            return response;
         }
     }
 }

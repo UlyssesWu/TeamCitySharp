@@ -21,7 +21,7 @@ namespace TeamCitySharp.Connection
         public TeamCityCaller(string hostName, bool useSsl)
         {
             if (string.IsNullOrEmpty(hostName))
-                throw new ArgumentNullException("hostName");
+                throw new ArgumentNullException(nameof(hostName));
 
             m_credentials = new Credentials {UseSSL = useSsl, HostName = hostName};
         }
@@ -75,6 +75,11 @@ namespace TeamCitySharp.Connection
             return Post<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
 
+        public async Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        {
+            return await PostAsync<T>(data, contentType, string.Format(urlPart, parts), accept);
+        }
+
         public void PostFormat(object data, string contentType, string urlPart, params object[] parts)
         {
             Post(data, contentType, string.Format(urlPart, parts), string.Empty);
@@ -85,14 +90,29 @@ namespace TeamCitySharp.Connection
             return Put<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
 
+        public async Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        {
+            return await PutAsync<T>(data, contentType, string.Format(urlPart, parts), accept);
+        }
+
         public void PutFormat(object data, string contentType, string urlPart, params object[] parts)
         {
             Put(data, contentType, string.Format(urlPart, parts), string.Empty);
         }
 
+        public async Task PutFormatAsync(object data, string contentType, string urlPart, params object[] parts)
+        {
+            await PutAsync(data, contentType, string.Format(urlPart, parts), string.Empty);
+        }
+
         public void DeleteFormat(string urlPart, params object[] parts)
         {
             Delete(string.Format(urlPart, parts));
+        }
+
+        public async Task DeleteFormatAsync(string urlPart, params object[] parts)
+        {
+            await DeleteAsync(string.Format(urlPart, parts));
         }
 
         public void GetDownloadFormat(Action<string> downloadHandler, string urlPart, params object[] parts)
@@ -117,6 +137,37 @@ namespace TeamCitySharp.Connection
             {
                 CreateHttpClient(HttpContentTypes.ApplicationJson)
                     .GetAsFile(url, tempFileName);
+                downloadHandler.Invoke(tempFileName);
+            }
+            finally
+            {
+                if (File.Exists(tempFileName))
+                    File.Delete(tempFileName);
+            }
+        }
+
+        public async Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, params object[] parts)
+        {
+            await GetDownloadFormatAsync(downloadHandler, urlPart, true, parts);
+        }
+
+        public async Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts)
+        {
+            if (CheckForAuthRequest())
+                throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+            if (string.IsNullOrEmpty(urlPart))
+                throw new ArgumentException("Url must be specified");
+
+            if (downloadHandler == null)
+                throw new ArgumentException("A download handler must be specified.");
+
+            string tempFileName = Path.GetRandomFileName();
+            var url = rest ? CreateUrl(string.Format(urlPart, parts)) : CreateUrl(string.Format(urlPart, parts), false);
+
+            try
+            {
+                await CreateHttpClient(HttpContentTypes.ApplicationJson)
+                    .GetAsFileAsync(url, tempFileName);
                 downloadHandler.Invoke(tempFileName);
             }
             finally
@@ -198,9 +249,19 @@ namespace TeamCitySharp.Connection
             return Post(data, contentType, urlPart, accept).StaticBody<T>();
         }
 
+        public async Task<T> PostAsync<T>(object data, string contentType, string urlPart, string accept)
+        {
+            return await Post(data, contentType, urlPart, accept).StaticBodyAsync<T>();
+        }
+
         public T Put<T>(object data, string contentType, string urlPart, string accept)
         {
             return Put(data, contentType, urlPart, accept).StaticBody<T>();
+        }
+
+        public async Task<T> PutAsync<T>(object data, string contentType, string urlPart, string accept)
+        {
+            return await Put(data, contentType, urlPart, accept).StaticBodyAsync<T>();
         }
 
         public bool Authenticate(string urlPart, bool throwExceptionOnHttpError = true)
@@ -222,9 +283,35 @@ namespace TeamCitySharp.Connection
             }
         }
 
+        public async Task<bool> AuthenticateAsync(string urlPart, bool throwExceptionOnHttpError = true)
+        {
+            try
+            {
+                var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+                var response = await httpClient.GetAsync(CreateUrl(urlPart));
+                if (response.StatusCode != HttpStatusCode.OK && throwExceptionOnHttpError)
+                {
+                    throw new AuthenticationException();
+                }
+
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+            catch (HttpException exception)
+            {
+                throw new AuthenticationException(exception.StatusDescription);
+            }
+        }
+        
         public HttpResponseMessage Post(object data, string contentType, string urlPart, string accept)
         {
             var response = MakePostRequest(data, contentType, urlPart, accept);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(object data, string contentType, string urlPart, string accept)
+        {
+            var response = await MakePostRequestAsync(data, contentType, urlPart, accept);
 
             return response;
         }
@@ -236,9 +323,21 @@ namespace TeamCitySharp.Connection
             return response;
         }
 
+        public async Task<HttpResponseMessage> PutAsync(object data, string contentType, string urlPart, string accept)
+        {
+            var response = await MakePutRequestAsync(data, contentType, urlPart, accept);
+
+            return response;
+        }
+
         public void Delete(string urlPart)
         {
             MakeDeleteRequest(urlPart);
+        }
+
+        public async Task DeleteAsync(string urlPart)
+        {
+            await MakeDeleteRequestAsync(urlPart);
         }
 
         private void MakeDeleteRequest(string urlPart)
@@ -247,6 +346,15 @@ namespace TeamCitySharp.Connection
             var url = CreateUrl(urlPart);
             var response = client.Delete(url);
             ThrowIfHttpError(response, url);
+        }
+
+        private async Task<HttpResponseMessage> MakeDeleteRequestAsync(string urlPart)
+        {
+            var client = CreateHttpClient(HttpContentTypes.TextPlain);
+            var url = CreateUrl(urlPart);
+            var response = await client.DeleteAsync(url);
+            ThrowIfHttpError(response, url);
+            return response;
         }
 
         private HttpResponseMessage MakePostRequest(object data, string contentType, string urlPart, string accept)
@@ -280,6 +388,16 @@ namespace TeamCitySharp.Connection
             return response;
         }
 
+        private async Task<HttpResponseMessage> MakePutRequestAsync(object data, string contentType, string urlPart, string accept)
+        {
+            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
+            var url = CreateUrl(urlPart);
+            var response = await client.PutAsync(url, data, contentType);
+            ThrowIfHttpError(response, url);
+
+            return response;
+        }
+
         private static bool IsHttpError(HttpResponseMessage response)
         {
             var num = (int) response.StatusCode / 100;
@@ -301,12 +419,7 @@ namespace TeamCitySharp.Connection
                 $"Error: {response.ReasonPhrase}\nHTTP: {response.StatusCode}\nURL: {url}\n{response.RawText()}");
         }
 
-        private string CreateUrl(string urlPart)
-        {
-            return CreateUrl(urlPart, true);
-        }
-
-        private string CreateUrl(string urlPart, bool rest)
+        private string CreateUrl(string urlPart, bool rest = true)
         {
             var protocol = m_credentials.UseSSL ? "https://" : "http://";
             if (m_credentials.UseSSL) ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -394,6 +507,26 @@ namespace TeamCitySharp.Connection
             return response.RawText();
         }
 
+        public async Task<string> GetRawAsync(string urlPart, bool rest = true)
+        {
+            if (CheckForAuthRequest())
+                throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+
+            if (string.IsNullOrEmpty(urlPart))
+                throw new ArgumentException("Url must be specified");
+
+            var url = rest ? CreateUrl(urlPart) : CreateUrl(urlPart, false);
+            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+            var response = await httpClient.GetAsync(url);
+            if (IsHttpError(response))
+            {
+                throw new HttpException(response.StatusCode,
+                    $"Error {response.ReasonPhrase}: Thrown with URL {url}");
+            }
+
+            return await response.RawTextAsync();
+        }
+
         private bool CheckForAuthRequest()
         {
             if (m_credentials.UseToken)
@@ -411,6 +544,8 @@ namespace TeamCitySharp.Connection
         {
             if (data.StartsWith("<"))
                 return HttpContentTypes.ApplicationXml;
+            if (data.StartsWith("{"))
+                return HttpContentTypes.ApplicationJson;
             return HttpContentTypes.TextPlain;
         }
 
@@ -438,6 +573,28 @@ namespace TeamCitySharp.Connection
             }
         }
 
+        public async Task<bool> GetBooleanAsync(string urlPart, params object[] parts)
+        {
+            var urlFull = string.Format(urlPart, parts);
+
+            try
+            {
+                if (CheckForAuthRequest())
+                    throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+
+                if (string.IsNullOrEmpty(urlFull))
+                    throw new ArgumentException("Url must be specified");
+
+                var url = CreateUrl(urlFull);
+                var response = await CreateHttpClient(HttpContentTypes.ApplicationJson).GetAsync(url);
+                return !IsHttpError(response);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public T GetNextHref<T>(string nextHref)
         {
             var reg = new System.Text.RegularExpressions.Regex(@"\/(guestAuth|httpAuth)(\/app\/rest)?(\/\d+.\d+)?");
@@ -451,93 +608,6 @@ namespace TeamCitySharp.Connection
             string urlPart = nextHref.Substring(reg.Match(nextHref).Value.Length);
             return await GetAsync<T>(urlPart);
         }
-
-        #region Async Methods
-
-
-
-
-        public async Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> DeleteFormatAsync<T>(string urlPart, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> GetDownloadFormatAsync<T>(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> PostAsync<T>(object data, string contentType, string urlPart, string accept)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> PutAsync<T>(object data, string contentType, string urlPart, string accept)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> DeleteAsync<T>(string urlPart)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> GetRawAsync<T>(string urlPart)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<T> GetRawAsync<T>(string urlPart, bool rest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> GetBooleanAsync(string urlPart, params object[] parts)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public async Task<T> GetNextHrefAsync<T>(string nextHref, bool rest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> AuthenticateAsync(string urlPart, bool throwExceptionOnHttpError = true)
-        {
-            try
-            {
-                var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
-                var response = await httpClient.GetAsync(CreateUrl(urlPart));
-                if (response.StatusCode != HttpStatusCode.OK && throwExceptionOnHttpError)
-                {
-                    throw new AuthenticationException();
-                }
-
-                return response.StatusCode == HttpStatusCode.OK;
-            }
-            catch (HttpException exception)
-            {
-                throw new AuthenticationException(exception.StatusDescription);
-            }
-        }
-
-        #endregion
+        
     }
 }
