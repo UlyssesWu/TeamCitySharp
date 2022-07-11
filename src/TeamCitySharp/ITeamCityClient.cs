@@ -1,4 +1,5 @@
 using TeamCitySharp.ActionTypes;
+using TeamCitySharp.AppServices;
 
 namespace TeamCitySharp
 {
@@ -25,5 +26,7 @@ namespace TeamCitySharp
     IStatistics Statistics { get; }
     IBuildInvestigations Investigations { get; }
     ITests Tests { get; }
+
+    Messages Messages { get; }
   }
 }

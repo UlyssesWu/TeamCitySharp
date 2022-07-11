@@ -1,4 +1,5 @@
 ﻿using TeamCitySharp.ActionTypes;
+using TeamCitySharp.AppServices;
 using TeamCitySharp.Connection;
 
 namespace TeamCitySharp
@@ -19,6 +20,7 @@ namespace TeamCitySharp
         private IBuildInvestigations m_investigations;
         private IStatistics m_statistics;
         private ITests m_tests;
+        private Messages m_messages;
 
         public TeamCityClient(string hostName, bool useSsl = false)
         {
@@ -85,5 +87,6 @@ namespace TeamCitySharp
         public IStatistics Statistics => m_statistics ??= new Statistics(m_caller);
 
         public ITests Tests => m_tests ??= new Tests(m_caller);
+        public Messages Messages => m_messages ??= new Messages(m_caller);
     }
 }

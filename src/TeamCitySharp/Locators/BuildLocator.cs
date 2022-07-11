@@ -17,7 +17,17 @@ namespace TeamCitySharp.Locators
       return new BuildLocator {Id = id};
     }
 
-    public static BuildLocator WithNumber(string number)
+    /// <summary>
+    /// <paramref name="id"/> should be a long number
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public static BuildLocator WithId(string id)
+    {
+        return new BuildLocator { Id = long.Parse(id) };
+    }
+
+        public static BuildLocator WithNumber(string number)
     {
       return new BuildLocator {Number = number};
     }

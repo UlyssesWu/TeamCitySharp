@@ -73,7 +73,7 @@ namespace TeamCitySharp.Connection
         Task DeleteFormatAsync(string urlPart, params object[] parts);
         Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, params object[] parts);
         Task GetDownloadFormatAsync(Action<string> downloadHandler, string urlPart, bool rest, params object[] parts);
-        Task<T> GetAsync<T>(string urlPart);
+        Task<T> GetAsync<T>(string urlPart, bool rest = true);
         Task<T> PostAsync<T>(object data, string contentType, string urlPart, string accept);
         Task<HttpResponseMessage> PostAsync(object data, string contentType, string urlPart, string accept);
         Task<T> PutAsync<T>(object data, string contentType, string urlPart, string accept);

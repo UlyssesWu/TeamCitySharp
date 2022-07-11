@@ -61,7 +61,7 @@ namespace TeamCitySharp.Connection
         }
         
         public async Task<T> GetFormatAsync<T>(string urlPart, params object[] parts)
-        {
+        {   
             return await GetAsync<T>(string.Format(urlPart, parts));
         }
 
@@ -228,9 +228,9 @@ namespace TeamCitySharp.Connection
             return response.StaticBody<T>();
         }
 
-        public async Task<T> GetAsync<T>(string urlPart)
+        public async Task<T> GetAsync<T>(string urlPart, bool rest = true)
         {
-            var response = await GetResponseAsync(urlPart);
+            var response = await GetResponseAsync(urlPart, rest);
             ThrowIfHttpError(response, urlPart);
             return await response.StaticBodyAsync<T>();
         }
@@ -262,7 +262,7 @@ namespace TeamCitySharp.Connection
             return response;
         }
 
-        private async Task<HttpResponseMessage> GetResponseAsync(string urlPart)
+        private async Task<HttpResponseMessage> GetResponseAsync(string urlPart, bool rest = true)
         {
             if (CheckForAuthRequest())
                 throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
@@ -270,7 +270,7 @@ namespace TeamCitySharp.Connection
             if (string.IsNullOrEmpty(urlPart))
                 throw new ArgumentException("Url must be specified");
 
-            var url = CreateUrl(urlPart);
+            var url = CreateUrl(urlPart, rest);
             var httpClient = CreateHttpClient(HttpContentTypes.ApplicationJson);
             return await httpClient.GetAsync(url);
         }
