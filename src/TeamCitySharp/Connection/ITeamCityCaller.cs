@@ -82,6 +82,7 @@ namespace TeamCitySharp.Connection
         Task<bool> GetBooleanAsync(string urlPart, params object[] parts);
         Task<T> GetNextHrefAsync<T>(string nextHref);
         Task<bool> AuthenticateAsync(string urlPart, bool throwExceptionOnHttpError = true);
+        Task<string> StartBackupAsync(string urlPart);
 
     }
 }

@@ -57,7 +57,7 @@ namespace TeamCitySharp.IntegrationTests
         [Test]
         public void it_returns_the_builds_queued_by_project_id()
         {
-            var result = m_client.BuildQueue.ByProjectLocater(ProjectLocator.WithId(m_queuedProjectId));
+            var result = m_client.BuildQueue.ByProjectLocator(ProjectLocator.WithId(m_queuedProjectId));
 
             Assert.IsNotEmpty(result);
         }

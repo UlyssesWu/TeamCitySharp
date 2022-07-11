@@ -32,7 +32,7 @@ namespace TeamCitySharp.ActionTypes
       const string Filename = "Filename";
       var backupOptions = new BackupOptions
         {
-          Filename = Filename,
+          FileName = Filename,
           IncludeBuildLogs = includeBuildLogs,
           IncludeConfigurations = includeConfigurations,
           IncludeDatabase = includeDatabase,

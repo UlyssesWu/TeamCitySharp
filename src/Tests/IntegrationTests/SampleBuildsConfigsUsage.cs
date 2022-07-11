@@ -427,7 +427,7 @@ namespace TeamCitySharp.IntegrationTests
                       .Value == depend);
 
         // Modify trigger
-        m_client.BuildConfigs.ModifTrigger(buildConfig.Id, depend, newDepend);
+        m_client.BuildConfigs.ModifyTrigger(buildConfig.Id, depend, newDepend);
         var actualTwo = m_client.BuildConfigs.ByConfigurationId(buildConfig.Id);
         Assert.That(actualTwo.Triggers.Trigger[0].Type == "buildDependencyTrigger" &&
                     actualTwo.Triggers.Trigger[0].Properties.Property.FirstOrDefault(x => x.Name == "dependsOn")
@@ -478,7 +478,7 @@ namespace TeamCitySharp.IntegrationTests
 
         m_client.BuildConfigs.SetArtifactDependency(buildLocatorFinal, artifactDependencies.ArtifactDependency[0]);
 
-        m_client.BuildConfigs.ModifArtifactDependencies(buildConfig.Id, depend, newDepend);
+        m_client.BuildConfigs.ModifyArtifactDependencies(buildConfig.Id, depend, newDepend);
 
       }
       catch (Exception e)
@@ -530,7 +530,7 @@ namespace TeamCitySharp.IntegrationTests
 
         m_client.BuildConfigs.SetSnapshotDependency(buildLocatorFinal, snapshotDependencies.SnapshotDependency[0]);
 
-        m_client.BuildConfigs.ModifSnapshotDependencies(buildConfig.Id, depend, newDepend);
+        m_client.BuildConfigs.ModifySnapshotDependencies(buildConfig.Id, depend, newDepend);
 
       }
       catch (Exception e)

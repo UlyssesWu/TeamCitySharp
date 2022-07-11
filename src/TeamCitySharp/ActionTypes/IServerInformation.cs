@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TeamCitySharp.ActionTypes
 {
-    public interface IServerInformation
+    public interface IServerInformation : IServerInformationAsync
     {
         Server ServerInfo();
         List<Plugin> AllPlugins();

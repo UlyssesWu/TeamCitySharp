@@ -197,6 +197,26 @@ namespace TeamCitySharp.Connection
             return string.Empty;
         }
 
+        public async Task<string> StartBackupAsync(string urlPart)
+        {
+            if (CheckForAuthRequest())
+                throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+
+            if (string.IsNullOrEmpty(urlPart))
+                throw new ArgumentException("Url must be specified");
+
+            var url = CreateUrl(urlPart);
+
+            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+            var response = await httpClient.PostAsync(url, null, HttpContentTypes.TextPlain);
+            ThrowIfHttpError(response, url);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                return await response.RawTextAsync();
+
+            return string.Empty;
+        }
+
         public T Get<T>(string urlPart)
         {
             var response = GetResponse(urlPart);
