@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TeamCitySharp.Connection;
 using TeamCitySharp.DomainEntities;
@@ -59,9 +60,32 @@ namespace TeamCitySharp.AppServices
             }
         }
 
+        public string TestCaseName
+        {
+            get
+            {
+                if (BlockType.IsTestType())
+                {
+                    List<string> caseNames = new List<string> { Text };
+                    var block = this;
+                    while (block.Parent != null && block.Parent.BlockType.IsTestType())
+                    {
+                        caseNames.Add(block.Parent.Text);
+                        block = block.Parent;
+                    }
+
+                    caseNames.Reverse();
+                    var finalName = string.Join(".", caseNames);
+                    return finalName.Trim();
+                }
+
+                return Text;
+            }
+        }
+
         public override string ToString()
         {
-            return $"[{Timestamp:s}][{Level}] id:{Id} | {Text}";
+            return $"[{Timestamp:s}][{Level}] id:{Id} | {(BlockType.IsTestType()? TestCaseName : Text)}";
         }
     }
 
@@ -127,6 +151,11 @@ namespace TeamCitySharp.AppServices
                 "$TEST_SUITE$" => LogBlockType.TestSuite,
                 _ => LogBlockType.Default
             };
+        }
+
+        public static bool IsTestType(this LogBlockType type)
+        {
+            return type == LogBlockType.TestBlock || type == LogBlockType.TestSuite;
         }
     }
 
