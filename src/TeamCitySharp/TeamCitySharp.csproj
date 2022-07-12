@@ -4,6 +4,12 @@
 	  <LangVersion>latest</LangVersion>
     <Version>2.0.16</Version>
     <Nullable>disable</Nullable>
+    <Authors>Paul Stack,Marc-Andre Vezeau,Ulysses Wu</Authors>
+    <Description>C# API for TeamCity</Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/UlyssesWu/TeamCitySharp</RepositoryUrl>
+    <PackageReleaseNotes>async for all API</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>

@@ -90,6 +90,11 @@ namespace TeamCitySharp.Connection
             Post(data, contentType, string.Format(urlPart, parts), string.Empty);
         }
 
+        public async Task PostFormatAsync(object data, string contentType, string urlPart, params object[] parts)
+        {
+            await PostAsync(data, contentType, string.Format(urlPart, parts), string.Empty);
+        }
+
         public T PutFormat<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
         {
             return Put<T>(data, contentType, string.Format(urlPart, parts), accept);

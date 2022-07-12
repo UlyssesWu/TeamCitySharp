@@ -154,5 +154,49 @@ namespace TeamCitySharp.ActionTypes
         Task<BuildConfig> ByProjectIdAndConfigurationIdAsync(string projectId, string buildConfigId);
         Task<List<BuildConfig>> ByProjectIdAsync(string projectId);
         Task<List<BuildConfig>> ByProjectNameAsync(string projectName);
+        Task<BuildConfig> CreateConfigurationAsync(BuildConfig buildConfig);
+        Task<BuildConfig> CreateConfigurationAsync(string projectName, string configurationName);
+        
+        Task<BuildConfig> CopyAsync(string buildConfigId, string buildConfigName, string destinationProjectId,
+            string newBuildTypeId = "");
+        Task SetConfigurationSettingAsync(BuildTypeLocator locator, string settingName, string settingValue);
+        Task<bool> GetConfigurationPauseStatusAsync(BuildTypeLocator locator);
+        Task SetConfigurationPauseStatusAsync(BuildTypeLocator locator, bool isPaused);
+        Task PostRawArtifactDependencyAsync(BuildTypeLocator locator, string rawXml);
+        Task PostRawBuildStepAsync(BuildTypeLocator locator, string rawXml);
+        Task PutRawBuildStepAsync(BuildTypeLocator locator, string rawXml);
+        Task<BuildSteps> GetRawBuildStepAsync(BuildTypeLocator locator);
+        Task PostRawBuildTriggerAsync(BuildTypeLocator locator, string rawXml);
+        Task SetArtifactDependencyAsync(BuildTypeLocator locator, ArtifactDependency dependency);
+        Task SetSnapshotDependencyAsync(BuildTypeLocator locator, SnapshotDependency dependency);
+        Task SetTriggerAsync(BuildTypeLocator locator, BuildTrigger trigger);
+        Task SetConfigurationParameterAsync(BuildTypeLocator locator, string key, string value);
+        Task DeleteConfigurationAsync(BuildTypeLocator locator);
+        Task DeleteAllBuildTypeParametersAsync(BuildTypeLocator locator);
+        Task PutAllBuildTypeParametersAsync(BuildTypeLocator locator, IDictionary<string, string> parameters);
+        Task DownloadConfigurationAsync(BuildTypeLocator locator, Action<string> downloadHandler);
+        Task PostRawAgentRequirementAsync(BuildTypeLocator locator, string rawXml);
+        Task DeleteBuildStepAsync(BuildTypeLocator locator, string buildStepId);
+        Task DeleteArtifactDependencyAsync(BuildTypeLocator locator, string artifactDependencyId);
+        Task DeleteAgentRequirementAsync(BuildTypeLocator locator, string agentRequirementId);
+        Task DeleteParameterAsync(BuildTypeLocator locator, string parameterName);
+        Task DeleteBuildTriggerAsync(BuildTypeLocator locator, string buildTriggerId);
+        Task SetBuildTypeTemplateAsync(BuildTypeLocator locatorBuildType, BuildTypeLocator locatorTemplate);
+        Task DeleteSnapshotDependencyAsync(BuildTypeLocator locator, string snapshotDependencyId);
+        Task PostRawSnapshotDependencyAsync(BuildTypeLocator locator, XmlElement rawXml);
+        Task<BuildConfig> BuildTypeAsync(BuildTypeLocator locator);
+        Task SetBuildTypeVariableAsync(BuildTypeLocator locatorBuildType, string nameVariable, string value);
+        Task<bool> ModifyTriggerAsync(string buildTypeId, string triggerId, string newBt);
+        Task<bool> ModifySnapshotDependenciesAsync(string buildTypeId, string oldDependencyConfigurationId, string newBt);
+        Task<bool> ModifyArtifactDependenciesAsync(string buildTypeId, string oldDependencyConfigurationId, string newBt);
+        Task<Branches> GetBranchesByBuildConfigurationIdAsync(string buildTypeId, BranchLocator locator = null);
+        Task<ArtifactDependencies> GetArtifactDependenciesAsync(string buildTypeId);
+        Task<SnapshotDependencies> GetSnapshotDependenciesAsync(string buildTypeId);
+        Task<Template> GetTemplateAsync(BuildTypeLocator locator);
+        Task<Templates> GetTemplatesAsync(BuildTypeLocator locator);
+        Task AttachTemplateAsync(BuildTypeLocator locator, string templateId);
+        Task AttachTemplatesAsync(BuildTypeLocator locator, Templates templateList);
+        Task DetachTemplateAsync(BuildTypeLocator locator);
+        Task DetachTemplatesAsync(BuildTypeLocator locator);
     }
 }

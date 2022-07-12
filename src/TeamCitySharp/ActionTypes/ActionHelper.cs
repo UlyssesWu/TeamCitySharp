@@ -1,6 +1,6 @@
 ﻿namespace TeamCitySharp.ActionTypes
 {
-  public class ActionHelper
+  public static class ActionHelper
   {
     /// <summary>
     /// Create a url with fields  

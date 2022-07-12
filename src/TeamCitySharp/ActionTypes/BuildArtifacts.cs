@@ -213,7 +213,7 @@ namespace TeamCitySharp.ActionTypes
                     currentUrl = $"{currentUrl}?{m_param}";
                 }
 
-                m_caller.GetDownloadFormat(tempfile => File.Move(tempfile, destination), currentUrl, false);
+                m_caller.GetDownloadFormat(tempFile => File.Move(tempFile, destination), currentUrl, false);
             }
 
             return downloaded;
@@ -328,7 +328,7 @@ namespace TeamCitySharp.ActionTypes
                                 currentUrl = $"{currentUrl}?{m_param}";
                             }
 
-                            m_caller.GetDownloadFormat(tempfile => File.Move(tempfile, destination), currentUrl, false);
+                            m_caller.GetDownloadFormat(tempFile => File.Move(tempFile, destination), currentUrl, false);
                             break;
                         }
                     }
