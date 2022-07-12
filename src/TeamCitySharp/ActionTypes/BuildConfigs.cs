@@ -249,9 +249,7 @@ namespace TeamCitySharp.ActionTypes
             if (newBuildTypeId != "")
             {
                 xmlData =
-                    string.Format(
-                        "<newBuildTypeDescription name='{0}' id='{2}' sourceBuildTypeLocator='id:{1}' copyAllAssociatedSettings='true' shareVCSRoots='false'/>",
-                        buildConfigName, buildConfigId, newBuildTypeId);
+                    $"<newBuildTypeDescription name='{buildConfigName}' id='{newBuildTypeId}' sourceBuildTypeLocator='id:{buildConfigId}' copyAllAssociatedSettings='true' shareVCSRoots='false'/>";
             }
             else
             {

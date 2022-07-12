@@ -124,9 +124,6 @@ namespace TeamCitySharp.AppServices
         {
             Logs.Clear();
         }
-
-        public IEnumerable<LogMessage> GetByIndent(int indent) => Logs.Values.Where(l => l.Indent == indent);
-        public IEnumerable<LogMessage> GetTopParents() => Logs.Values.Where(l => l.Parent == null);
     }
 
     public static class LogExtension

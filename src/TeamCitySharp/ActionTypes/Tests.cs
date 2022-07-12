@@ -105,7 +105,7 @@ namespace TeamCitySharp.ActionTypes
         private async Task<List<TestOccurrences>> AllResultsAsync(TestOccurrences firstPageResult)
         {
             var result = new List<TestOccurrences>() {firstPageResult};
-            while (!(string.IsNullOrEmpty(result.Last().NextHref)))
+            while (!string.IsNullOrEmpty(result.Last().NextHref))
             {
                 var response = await m_caller.GetNextHrefAsync<TestOccurrences>(result.Last().NextHref);
                 result.Add(response);
