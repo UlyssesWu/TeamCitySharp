@@ -23,7 +23,7 @@ namespace TeamCitySharp.Connection
             if (string.IsNullOrEmpty(hostName))
                 throw new ArgumentNullException(nameof(hostName));
 
-            m_credentials = new Credentials {UseSSL = useSsl, HostName = hostName};
+            m_credentials = new Credentials { UseSSL = useSsl, HostName = hostName };
         }
 
         public void DisableCache()
@@ -59,9 +59,9 @@ namespace TeamCitySharp.Connection
         {
             return Get<T>(string.Format(urlPart, parts));
         }
-        
+
         public async Task<T> GetFormatAsync<T>(string urlPart, params object[] parts)
-        {   
+        {
             return await GetAsync<T>(string.Format(urlPart, parts));
         }
 
@@ -80,7 +80,8 @@ namespace TeamCitySharp.Connection
             return Post<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
 
-        public async Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        public async Task<T> PostFormatAsync<T>(object data, string contentType, string accept, string urlPart,
+            params object[] parts)
         {
             return await PostAsync<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
@@ -100,7 +101,8 @@ namespace TeamCitySharp.Connection
             return Put<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
 
-        public async Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart, params object[] parts)
+        public async Task<T> PutFormatAsync<T>(object data, string contentType, string accept, string urlPart,
+            params object[] parts)
         {
             return await PutAsync<T>(data, contentType, string.Format(urlPart, parts), accept);
         }
@@ -145,8 +147,7 @@ namespace TeamCitySharp.Connection
 
             try
             {
-                CreateHttpClient(HttpContentTypes.ApplicationJson)
-                    .GetAsFile(url, tempFileName);
+                CreateHttpClient().GetAsFile(url, tempFileName);
                 downloadHandler.Invoke(tempFileName);
             }
             finally
@@ -176,8 +177,7 @@ namespace TeamCitySharp.Connection
 
             try
             {
-                await CreateHttpClient(HttpContentTypes.ApplicationJson)
-                    .GetAsFileAsync(url, tempFileName);
+                await CreateHttpClient().GetAsFileAsync(url, tempFileName);
                 downloadHandler.Invoke(tempFileName);
             }
             finally
@@ -197,7 +197,7 @@ namespace TeamCitySharp.Connection
 
             var url = CreateUrl(urlPart);
 
-            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+            var httpClient = CreateHttpClient();
             var response = httpClient.Post(url, null, HttpContentTypes.TextPlain);
             ThrowIfHttpError(response, url);
 
@@ -217,7 +217,7 @@ namespace TeamCitySharp.Connection
 
             var url = CreateUrl(urlPart);
 
-            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
+            var httpClient = CreateHttpClient();
             var response = await httpClient.PostAsync(url, null, HttpContentTypes.TextPlain);
             ThrowIfHttpError(response, url);
 
@@ -262,7 +262,7 @@ namespace TeamCitySharp.Connection
             var url = CreateUrl(urlPart);
 
             var response =
-                CreateHttpClient(HttpContentTypes.ApplicationJson).Get(url);
+                CreateHttpClient().Get(url, HttpContentTypes.ApplicationJson);
             ThrowIfHttpError(response, url);
             return response;
         }
@@ -276,8 +276,8 @@ namespace TeamCitySharp.Connection
                 throw new ArgumentException("Url must be specified");
 
             var url = CreateUrl(urlPart, rest);
-            var httpClient = CreateHttpClient(HttpContentTypes.ApplicationJson);
-            return await httpClient.GetAsync(url);
+            var httpClient = CreateHttpClient();
+            return await httpClient.GetAsync(url, HttpContentTypes.ApplicationJson);
         }
 
         public T Post<T>(object data, string contentType, string urlPart, string accept)
@@ -304,8 +304,8 @@ namespace TeamCitySharp.Connection
         {
             try
             {
-                var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
-                var response = httpClient.Get(CreateUrl(urlPart));
+                var httpClient = CreateHttpClient();
+                var response = httpClient.Get(CreateUrl(urlPart), HttpContentTypes.TextPlain);
                 if (response.StatusCode != HttpStatusCode.OK && throwExceptionOnHttpError)
                 {
                     throw new AuthenticationException();
@@ -323,8 +323,8 @@ namespace TeamCitySharp.Connection
         {
             try
             {
-                var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
-                var response = await httpClient.GetAsync(CreateUrl(urlPart));
+                var httpClient = CreateHttpClient();
+                var response = await httpClient.GetAsync(CreateUrl(urlPart), HttpContentTypes.TextPlain);
                 if (response.StatusCode != HttpStatusCode.OK && throwExceptionOnHttpError)
                 {
                     throw new AuthenticationException();
@@ -337,7 +337,7 @@ namespace TeamCitySharp.Connection
                 throw new AuthenticationException(exception.StatusDescription);
             }
         }
-        
+
         public HttpResponseMessage Post(object data, string contentType, string urlPart, string accept)
         {
             var response = MakePostRequest(data, contentType, urlPart, accept);
@@ -378,37 +378,39 @@ namespace TeamCitySharp.Connection
 
         private void MakeDeleteRequest(string urlPart)
         {
-            var client = CreateHttpClient(HttpContentTypes.TextPlain);
+            var client = CreateHttpClient();
             var url = CreateUrl(urlPart);
-            var response = client.Delete(url);
+            var response = client.Delete(url); //TODO: HttpContentTypes.TextPlain
             ThrowIfHttpError(response, url);
         }
 
         private async Task<HttpResponseMessage> MakeDeleteRequestAsync(string urlPart)
         {
-            var client = CreateHttpClient(HttpContentTypes.TextPlain);
+            var client = CreateHttpClient();
             var url = CreateUrl(urlPart);
-            var response = await client.DeleteAsync(url);
+            var response = await client.DeleteAsync(url); //TODO: HttpContentTypes.TextPlain
             ThrowIfHttpError(response, url);
             return response;
         }
 
         private HttpResponseMessage MakePostRequest(object data, string contentType, string urlPart, string accept)
         {
-            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
-
+            var client = CreateHttpClient();
+            var finalAccept = string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept;
             var url = CreateUrl(urlPart);
-            var response = client.Post(url, data, contentType);
+            var response = client.Post(url, data, contentType, finalAccept);
             ThrowIfHttpError(response, url);
 
             return response;
         }
-        private async Task<HttpResponseMessage> MakePostRequestAsync(object data, string contentType, string urlPart, string accept)
-        {
-            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
 
+        private async Task<HttpResponseMessage> MakePostRequestAsync(object data, string contentType, string urlPart,
+            string accept)
+        {
+            var client = CreateHttpClient();
+            var finalAccept = string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept;
             var url = CreateUrl(urlPart);
-            var response = await client.PostAsync(url, data, contentType);
+            var response = await client.PostAsync(url, data, contentType, finalAccept);
             ThrowIfHttpError(response, url);
 
             return response;
@@ -416,19 +418,22 @@ namespace TeamCitySharp.Connection
 
         private HttpResponseMessage MakePutRequest(object data, string contentType, string urlPart, string accept)
         {
-            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
+            var client = CreateHttpClient();
             var url = CreateUrl(urlPart);
-            var response = client.Put(url, data, contentType);
+            var finalAccept = string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept;
+            var response = client.Put(url, data, contentType, finalAccept);
             ThrowIfHttpError(response, url);
 
             return response;
         }
 
-        private async Task<HttpResponseMessage> MakePutRequestAsync(object data, string contentType, string urlPart, string accept)
+        private async Task<HttpResponseMessage> MakePutRequestAsync(object data, string contentType, string urlPart,
+            string accept)
         {
-            var client = CreateHttpClient(string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept);
+            var client = CreateHttpClient();
             var url = CreateUrl(urlPart);
-            var response = await client.PutAsync(url, data, contentType);
+            var finalAccept = string.IsNullOrWhiteSpace(accept) ? GetContentType(data.ToString()) : accept;
+            var response = await client.PutAsync(url, data, contentType, finalAccept);
             ThrowIfHttpError(response, url);
 
             return response;
@@ -436,7 +441,7 @@ namespace TeamCitySharp.Connection
 
         private static bool IsHttpError(HttpResponseMessage response)
         {
-            var num = (int) response.StatusCode / 100;
+            var num = (int)response.StatusCode / 100;
 
             return (num == 4 || num == 5);
         }
@@ -479,7 +484,7 @@ namespace TeamCitySharp.Connection
             var httpClient = m_client;
 
             if (m_useNoCache)
-                httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue {NoCache = true};
+                httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
 
             if (m_credentials.ActAsGuest)
             {
@@ -498,17 +503,21 @@ namespace TeamCitySharp.Connection
             }
         }
 
-        private HttpClient CreateHttpClient(string accept)
+        private HttpClient CreateHttpClient()
         {
-            var httpClient = m_client ?? new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept
-                .Add(new MediaTypeWithQualityHeaderValue(accept));
-
             if (m_client != null)
             {
-                return httpClient;
+                return m_client;
             }
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue(HttpContentTypes.ApplicationJson));
+            httpClient.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue(HttpContentTypes.ApplicationXml));
+            httpClient.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue(HttpContentTypes.TextPlain));
 
             m_client = httpClient;
             UpdateHttpClientCredentials();
@@ -532,8 +541,8 @@ namespace TeamCitySharp.Connection
 
             var url = rest ? CreateUrl(urlPart) : CreateUrl(urlPart, false);
 
-            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
-            var response = httpClient.Get(url);
+            var httpClient = CreateHttpClient();
+            var response = httpClient.Get(url, HttpContentTypes.TextPlain);
             if (IsHttpError(response))
             {
                 throw new HttpException(response.StatusCode,
@@ -552,8 +561,8 @@ namespace TeamCitySharp.Connection
                 throw new ArgumentException("Url must be specified");
 
             var url = rest ? CreateUrl(urlPart) : CreateUrl(urlPart, false);
-            var httpClient = CreateHttpClient(HttpContentTypes.TextPlain);
-            var response = await httpClient.GetAsync(url);
+            var httpClient = CreateHttpClient();
+            var response = await httpClient.GetAsync(url, HttpContentTypes.TextPlain);
             if (IsHttpError(response))
             {
                 throw new HttpException(response.StatusCode,
@@ -600,7 +609,7 @@ namespace TeamCitySharp.Connection
                 var url = CreateUrl(urlFull);
 
                 var response =
-                    CreateHttpClient(HttpContentTypes.ApplicationJson).Get(url);
+                    CreateHttpClient().Get(url, HttpContentTypes.ApplicationJson);
                 return !IsHttpError(response);
             }
             catch (Exception)
@@ -622,7 +631,7 @@ namespace TeamCitySharp.Connection
                     throw new ArgumentException("Url must be specified");
 
                 var url = CreateUrl(urlFull);
-                var response = await CreateHttpClient(HttpContentTypes.ApplicationJson).GetAsync(url);
+                var response = await CreateHttpClient().GetAsync(url, HttpContentTypes.ApplicationJson);
                 return !IsHttpError(response);
             }
             catch (Exception)
@@ -644,6 +653,5 @@ namespace TeamCitySharp.Connection
             string urlPart = nextHref.Substring(reg.Match(nextHref).Value.Length);
             return await GetAsync<T>(urlPart);
         }
-        
     }
 }

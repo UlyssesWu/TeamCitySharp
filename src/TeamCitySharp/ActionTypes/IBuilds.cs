@@ -71,5 +71,26 @@ namespace TeamCitySharp.ActionTypes
         Task DownloadLogsAsync(string projectId, bool zipped, Action<string> downloadHandler);
         Task PinBuildByBuildNumberAsync(string buildConfigId, string buildNumber, string comment);
         Task UnPinBuildByBuildNumberAsync(string buildConfigId, string buildNumber);
+
+        /// <inheritdoc cref="CancelBuildAsync"/>
+        Task<Build> CancelBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false);
+
+        /// <summary>
+        /// Cancel a started build.
+        /// </summary>
+        /// <param name="locator"></param>
+        /// <param name="comment">to provide an optional comment on why the build was canceled</param>
+        /// <param name="reAddIntoQueue">a boolean property which declares if this is a request to restore a previously canceled build</param>
+        /// <returns></returns>
+        Task<Build> CancelBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false);
+
+        /// <summary>
+        /// Cancel a queued build.
+        /// </summary>
+        /// <inheritdoc cref="CancelBuildAsync"/>
+        Task<Build> CancelQueuedBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false);
+
+        /// <inheritdoc cref="CancelBuildAsync"/>
+        Task<Build> CancelQueuedBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false);
     }
 }

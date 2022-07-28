@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -9,28 +10,36 @@ namespace TeamCitySharp.Connection
 {
     public static class HttpClientExtensions
     {
-        public static HttpResponseMessage Get(this HttpClient src, string url)
+        public static HttpResponseMessage Get(this HttpClient src, string url, string accpet = "")
         {
             //TODO: quick fix, need to fix soon for a big transaction
             //src.Timeout=TimeSpan.FromHours(1);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
+            if (!string.IsNullOrEmpty(accpet))
+            {
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accpet));
+            }
             return src.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).Result;
         }
 
-        public static HttpResponseMessage Post(this HttpClient src, string url, object body, string contentType)
+        /// <summary>
+        /// GetAsync with ContentType
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="url"></param>
+        /// <param name="accept"></param>
+        /// <returns></returns>
+        public static async Task<HttpResponseMessage> GetAsync(this HttpClient src, string url, string accept)
         {
-            StringContent content = null;
-            if (body != null)
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            if (!string.IsNullOrEmpty(accept))
             {
-                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
-
-                content = new StringContent(data, Encoding.ASCII, contentType);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
             }
-
-            return src.PostAsync(url, content).GetAwaiter().GetResult();
+            return await src.SendAsync(request);
         }
 
-        public static async Task<HttpResponseMessage> PostAsync(this HttpClient src, string url, object body, string contentType)
+        public static HttpResponseMessage Post(this HttpClient src, string url, object body, string contentType, string accept = "")
         {
             StringContent content = null;
             if (body != null)
@@ -40,23 +49,16 @@ namespace TeamCitySharp.Connection
                 content = new StringContent(data, Encoding.UTF8, contentType);
             }
 
-            return await src.PostAsync(url, content);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = content;
+            request.Headers.Accept.Add(!string.IsNullOrEmpty(accept)
+                ? new MediaTypeWithQualityHeaderValue(accept)
+                : new MediaTypeWithQualityHeaderValue(contentType));
+
+            return src.SendAsync(request).GetAwaiter().GetResult();
         }
 
-        public static HttpResponseMessage Put(this HttpClient src, string url, object body, string contentType)
-        {
-            StringContent content = null;
-            if (body != null)
-            {
-                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
-
-                content = new StringContent(data, Encoding.ASCII, contentType);
-            }
-
-            return src.PutAsync(url, content).GetAwaiter().GetResult();
-        }
-
-        public static async Task<HttpResponseMessage> PutAsync(this HttpClient src, string url, object body, string contentType)
+        public static async Task<HttpResponseMessage> PostAsync(this HttpClient src, string url, object body, string contentType, string accept = "")
         {
             StringContent content = null;
             if (body != null)
@@ -66,7 +68,51 @@ namespace TeamCitySharp.Connection
                 content = new StringContent(data, Encoding.UTF8, contentType);
             }
 
-            return await src.PutAsync(url, content);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = content;
+            request.Headers.Accept.Add(!string.IsNullOrEmpty(accept)
+                ? new MediaTypeWithQualityHeaderValue(accept)
+                : new MediaTypeWithQualityHeaderValue(contentType));
+
+            return await src.SendAsync(request);
+        }
+
+        public static HttpResponseMessage Put(this HttpClient src, string url, object body, string contentType, string accept = "")
+        {
+            StringContent content = null;
+            if (body != null)
+            {
+                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
+
+                content = new StringContent(data, Encoding.UTF8, contentType);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Content = content;
+            request.Headers.Accept.Add(!string.IsNullOrEmpty(accept)
+                ? new MediaTypeWithQualityHeaderValue(accept)
+                : new MediaTypeWithQualityHeaderValue(contentType));
+
+            return src.SendAsync(request).GetAwaiter().GetResult();
+        }
+
+        public static async Task<HttpResponseMessage> PutAsync(this HttpClient src, string url, object body, string contentType, string accept = "")
+        {
+            StringContent content = null;
+            if (body != null)
+            {
+                var data = contentType == HttpContentTypes.ApplicationJson ? JsonConvert.SerializeObject(body) : body.ToString();
+
+                content = new StringContent(data, Encoding.UTF8, contentType);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Content = content;
+            request.Headers.Accept.Add(!string.IsNullOrEmpty(accept)
+                ? new MediaTypeWithQualityHeaderValue(accept)
+                : new MediaTypeWithQualityHeaderValue(contentType));
+
+            return await src.SendAsync(request);
         }
 
         public static HttpResponseMessage Delete(this HttpClient src, string url)
@@ -76,7 +122,7 @@ namespace TeamCitySharp.Connection
 
         public static HttpResponseMessage GetAsFile(this HttpClient src, string url, string tempFilename)
         {
-            using (var response = src.Get(url))
+            using (var response = src.Get(url, HttpContentTypes.ApplicationJson)) //TODO: am I right?
             {
                 response.EnsureSuccessStatusCode();
 

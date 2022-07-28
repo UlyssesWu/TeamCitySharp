@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -39,7 +40,16 @@ namespace TeamCitySharp.Connection
                 Culture = CultureInfo.CurrentCulture
             };
 
-            return JsonConvert.DeserializeObject<T>(src, _jsonSettings);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(src, _jsonSettings);
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(src);
+                throw;
+            }
         }
     }
 }
