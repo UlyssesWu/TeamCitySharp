@@ -514,18 +514,6 @@ namespace TeamCitySharp.ActionTypes
                 HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/builds/id:{buildId}");
         }
 
-        public async Task<Build> CancelQueuedBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false)
-        {
-            return await m_caller.PostFormatAsync<Build>(new BuildCancelRequest { Comment = comment, ReAddIntoQueue = reAddIntoQueue },
-                HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/buildQueue/{locator}");
-        }
-
-        public async Task<Build> CancelQueuedBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false)
-        {
-            return await m_caller.PostFormatAsync<Build>(new BuildCancelRequest { Comment = comment, ReAddIntoQueue = reAddIntoQueue },
-                HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/buildQueue/id:{buildId}");
-        }
-
         #endregion
 
         #region Private Methods

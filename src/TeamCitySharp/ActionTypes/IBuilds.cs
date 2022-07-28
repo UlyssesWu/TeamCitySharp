@@ -83,14 +83,5 @@ namespace TeamCitySharp.ActionTypes
         /// <param name="reAddIntoQueue">a boolean property which declares if this is a request to restore a previously canceled build</param>
         /// <returns></returns>
         Task<Build> CancelBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false);
-
-        /// <summary>
-        /// Cancel a queued build.
-        /// </summary>
-        /// <inheritdoc cref="CancelBuildAsync"/>
-        Task<Build> CancelQueuedBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false);
-
-        /// <inheritdoc cref="CancelBuildAsync"/>
-        Task<Build> CancelQueuedBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false);
     }
 }

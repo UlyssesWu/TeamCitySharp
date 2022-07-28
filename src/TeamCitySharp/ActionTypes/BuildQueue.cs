@@ -62,5 +62,17 @@ namespace TeamCitySharp.ActionTypes
             var buildWrapper = await m_caller.GetAsync<BuildWrapper>($"/buildQueue?locator=project:({locator})");
             return int.Parse(buildWrapper.Count) > 0 ? buildWrapper.Build : new List<Build>();
         }
+        
+        public async Task<Build> CancelQueuedBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false)
+        {
+            return await m_caller.PostFormatAsync<Build>(new BuildCancelRequest { Comment = comment, ReAddIntoQueue = reAddIntoQueue },
+                HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/buildQueue/{locator}");
+        }
+
+        public async Task<Build> CancelQueuedBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false)
+        {
+            return await m_caller.PostFormatAsync<Build>(new BuildCancelRequest { Comment = comment, ReAddIntoQueue = reAddIntoQueue },
+                HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/buildQueue/id:{buildId}");
+        }
     }
 }
