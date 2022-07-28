@@ -508,6 +508,22 @@ namespace TeamCitySharp.ActionTypes
                 HttpContentTypes.ApplicationJson, HttpContentTypes.ApplicationJson, $"/builds/{locator}");
         }
 
+        public async Task SetBuildCommentAsync(BuildLocator locator, string comment = "")
+        {
+            await m_caller.PutAsync(comment, HttpContentTypes.TextPlain, $"/builds/{locator}/comment",
+                HttpContentTypes.TextPlain);
+        }
+
+        public async Task DeleteBuildCommentAsync(BuildLocator locator)
+        {
+            await m_caller.DeleteAsync($"/builds/{locator}/comment");
+        }
+
+        public async Task<Comment> GetCanceledInfoAsync(BuildLocator locator)
+        {
+            return await m_caller.GetAsync<Comment>(ActionHelper.CreateFieldUrl($"/builds/{locator}/comment", m_fields));
+        }
+
         public async Task<Build> CancelBuildByIdAsync(string buildId, string comment = "", bool reAddIntoQueue = false)
         {
             return await m_caller.PostFormatAsync<Build>(new BuildCancelRequest { Comment = comment, ReAddIntoQueue = reAddIntoQueue },

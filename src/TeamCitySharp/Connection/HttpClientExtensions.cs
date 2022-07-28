@@ -10,14 +10,14 @@ namespace TeamCitySharp.Connection
 {
     public static class HttpClientExtensions
     {
-        public static HttpResponseMessage Get(this HttpClient src, string url, string accpet = "")
+        public static HttpResponseMessage Get(this HttpClient src, string url, string accept = "")
         {
             //TODO: quick fix, need to fix soon for a big transaction
             //src.Timeout=TimeSpan.FromHours(1);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            if (!string.IsNullOrEmpty(accpet))
+            if (!string.IsNullOrEmpty(accept))
             {
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accpet));
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
             }
             return src.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).Result;
         }

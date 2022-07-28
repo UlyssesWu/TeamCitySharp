@@ -83,5 +83,27 @@ namespace TeamCitySharp.ActionTypes
         /// <param name="reAddIntoQueue">a boolean property which declares if this is a request to restore a previously canceled build</param>
         /// <returns></returns>
         Task<Build> CancelBuildAsync(BuildLocator locator, string comment = "", bool reAddIntoQueue = false);
+
+        /// <summary>
+        /// Update the comment on the matching build.
+        /// </summary>
+        /// <param name="locator"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        Task SetBuildCommentAsync(BuildLocator locator, string comment = "");
+
+        /// <summary>
+        /// Remove the build comment matching the locator.
+        /// </summary>
+        /// <param name="locator"></param>
+        /// <returns></returns>
+        Task DeleteBuildCommentAsync(BuildLocator locator);
+
+        /// <summary>
+        /// Check if the matching build is canceled.
+        /// </summary>
+        /// <param name="locator"></param>
+        /// <returns></returns>
+        Task<Comment> GetCanceledInfoAsync(BuildLocator locator);
     }
 }
