@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TeamCitySharp.Connection;
 using TeamCitySharp.DomainEntities;
@@ -22,6 +21,12 @@ namespace TeamCitySharp.AppServices
         TestSuite = 1,
         TestBlock = 2,
         TargetBlock = 3,
+        Agent,
+        Build,
+        ChangesBlock,
+        ToolDownloading,
+        TeamcityBuildStepType,
+        
     }
 
     public class LogMessage
@@ -81,6 +86,26 @@ namespace TeamCitySharp.AppServices
 
                 return Text;
             }
+        }
+
+        public bool ContainsName(string namePart)
+        {
+            if (Text == namePart)
+            {
+                return true;
+            }
+
+            var block = this;
+            while (block.Parent != null && block.Parent.BlockType.IsTestType())
+            {
+                if (block.Parent.Text == namePart)
+                {
+                    return true;
+                }
+                block = block.Parent;
+            }
+
+            return false;
         }
 
         public override string ToString()
@@ -143,9 +168,14 @@ namespace TeamCitySharp.AppServices
                 return LogBlockType.Default;
             return msg.blockType switch
             {
-                "$TARGET_BLOCK$" => LogBlockType.TargetBlock,
-                "$TEST_BLOCK$" => LogBlockType.TestBlock,
-                "$TEST_SUITE$" => LogBlockType.TestSuite,
+                "$TARGET_BLOCK$" => LogBlockType.TargetBlock, //"NUnit report watcher"
+                "$TEST_BLOCK$" => LogBlockType.TestBlock, //"Current test case: XXX"
+                "$TEST_SUITE$" => LogBlockType.TestSuite, //"Test_XXX"
+                "Build" => LogBlockType.Build, //"btXXX"
+                "changesBlock" => LogBlockType.ChangesBlock, //"Collecting changes in 1 VCS root"
+                "toolDownloading" => LogBlockType.ToolDownloading, //"Updating tools for build"
+                "teamcity-build-step-type" => LogBlockType.TeamcityBuildStepType, //"Step 1/n: XXX"
+                "agent" => LogBlockType.Agent, //"Publishing artifacts"
                 _ => LogBlockType.Default
             };
         }
