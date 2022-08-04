@@ -34,6 +34,14 @@ namespace TeamCitySharp.ActionTypes
             return projectWrapper.Project;
         }
 
+        public async Task<Templates> GetProjectTemplatesAsync(ProjectLocator locator)
+        {
+            var templates = await m_caller.GetAsync<Templates>(
+                ActionHelper.CreateFieldUrl($"/projects/{locator}/templates", m_fields));
+
+            return templates;
+        }
+
         public async Task<List<Project>> AllAsync()
         {
             var projectWrapper = await m_caller.GetAsync<ProjectWrapper>(ActionHelper.CreateFieldUrl("/projects", m_fields));

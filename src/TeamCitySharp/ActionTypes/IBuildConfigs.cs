@@ -145,6 +145,8 @@ namespace TeamCitySharp.ActionTypes
 
     public interface IBuildConfigsAsync
     {
+        Task<BuildConfig> AddBuildTemplateAsync(BuildTypeLocator locator, Template template, bool optimizeSettings = false);
+        Task<BuildConfig> GetBuildTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template);
         Task<List<BuildConfig>> AllAsync();
         Task<BuildConfig> ByConfigurationNameAsync(string buildConfigName);
         Task<BuildConfig> ByConfigurationIdAsync(string buildConfigId);

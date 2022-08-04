@@ -15,6 +15,8 @@
     public string Id { get; private set; }
     public string Name { get; private set; }
 
+    //public bool TemplateFlag { get; set; }
+
     public override string ToString()
     {
       if (!string.IsNullOrEmpty(Id))

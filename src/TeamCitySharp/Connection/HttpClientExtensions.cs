@@ -50,10 +50,10 @@ namespace TeamCitySharp.Connection
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Content = content;
             request.Headers.Accept.Add(!string.IsNullOrEmpty(accept)
                 ? new MediaTypeWithQualityHeaderValue(accept)
                 : new MediaTypeWithQualityHeaderValue(contentType));
+            request.Content = content;
 
             return src.SendAsync(request).GetAwaiter().GetResult();
         }

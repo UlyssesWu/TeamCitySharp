@@ -38,6 +38,16 @@ namespace TeamCitySharp.ActionTypes
             return buildType.BuildType;
         }
 
+        public async Task<BuildConfig> AddBuildTemplateAsync(BuildTypeLocator locator, Template template, bool optimizeSettings = false)
+        {
+           return await m_caller.PostAsync<BuildConfig>(template, HttpContentTypes.ApplicationJson, $"/buildTypes/{locator}/templates", HttpContentTypes.ApplicationJson);
+        }
+
+        public async Task<BuildConfig> GetBuildTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template)
+        {
+            return await m_caller.GetAsync<BuildConfig>($"/buildTypes/{locator}/templates/{template}");
+        }
+
         public async Task<List<BuildConfig>> AllAsync()
         {
             var buildType =

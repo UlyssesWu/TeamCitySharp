@@ -32,6 +32,7 @@ namespace TeamCitySharp.ActionTypes
 
     public interface IProjectsAsync
     {
+        Task<Templates> GetProjectTemplatesAsync(ProjectLocator locator);
         Task<List<Project>> AllAsync();
         Task<Project> ByNameAsync(string projectLocatorName);
         Task<Project> ByIdAsync(string projectLocatorId);
