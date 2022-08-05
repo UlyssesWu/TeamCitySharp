@@ -146,6 +146,7 @@ namespace TeamCitySharp.ActionTypes
     public interface IBuildConfigsAsync
     {
         Task<BuildConfig> AddBuildTemplateAsync(BuildTypeLocator locator, Template template, bool optimizeSettings = false);
+        Task RemoveTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template);
         Task<BuildConfig> GetBuildTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template);
         Task<List<BuildConfig>> AllAsync();
         Task<BuildConfig> ByConfigurationNameAsync(string buildConfigName);
@@ -194,11 +195,12 @@ namespace TeamCitySharp.ActionTypes
         Task<Branches> GetBranchesByBuildConfigurationIdAsync(string buildTypeId, BranchLocator locator = null);
         Task<ArtifactDependencies> GetArtifactDependenciesAsync(string buildTypeId);
         Task<SnapshotDependencies> GetSnapshotDependenciesAsync(string buildTypeId);
-        Task<Template> GetTemplateAsync(BuildTypeLocator locator);
         Task<Templates> GetTemplatesAsync(BuildTypeLocator locator);
+        [Obsolete("use AddBuildTemplateAsync instead.")]
         Task AttachTemplateAsync(BuildTypeLocator locator, string templateId);
         Task AttachTemplatesAsync(BuildTypeLocator locator, Templates templateList);
+        [Obsolete("use RemoveTemplate instead.")]
         Task DetachTemplateAsync(BuildTypeLocator locator);
-        Task DetachTemplatesAsync(BuildTypeLocator locator);
+        Task RemoveAllTemplatesAsync(BuildTypeLocator locator);
     }
 }

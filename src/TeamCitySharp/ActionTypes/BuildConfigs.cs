@@ -43,6 +43,11 @@ namespace TeamCitySharp.ActionTypes
            return await m_caller.PostAsync<BuildConfig>(template, HttpContentTypes.ApplicationJson, $"/buildTypes/{locator}/templates", HttpContentTypes.ApplicationJson);
         }
 
+        public async Task RemoveTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template)
+        {
+            await m_caller.DeleteAsync($"/buildTypes/{locator}/templates/{template}");
+        }
+
         public async Task<BuildConfig> GetBuildTemplateAsync(BuildTypeLocator locator, BuildTypeLocator template)
         {
             return await m_caller.GetAsync<BuildConfig>($"/buildTypes/{locator}/templates/{template}");
@@ -933,20 +938,20 @@ namespace TeamCitySharp.ActionTypes
             }
         }
 
-        public async Task<Template> GetTemplateAsync(BuildTypeLocator locator)
-        {
-            try
-            {
-                var templateWrapper =
-                    await m_caller.GetFormatAsync<Template>(ActionHelper.CreateFieldUrl("/buildTypes/{0}/template", m_fields),
-                        locator);
-                return templateWrapper;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        //public async Task<Template> GetTemplateAsync(BuildTypeLocator locator)
+        //{
+        //    try
+        //    {
+        //        var templateWrapper =
+        //            await m_caller.GetFormatAsync<Template>(ActionHelper.CreateFieldUrl("/buildTypes/{0}/template", m_fields),
+        //                locator);
+        //        return templateWrapper;
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public Templates GetTemplates(BuildTypeLocator locator)
         {
@@ -1014,7 +1019,7 @@ namespace TeamCitySharp.ActionTypes
             m_caller.DeleteFormat("/buildTypes/{0}/templates", locator);
         }
 
-        public async Task DetachTemplatesAsync(BuildTypeLocator locator)
+        public async Task RemoveAllTemplatesAsync(BuildTypeLocator locator)
         {
             await m_caller.DeleteFormatAsync("/buildTypes/{0}/templates", locator);
         }
