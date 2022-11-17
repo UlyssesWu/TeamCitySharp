@@ -10,9 +10,12 @@
     <RepositoryUrl>https://github.com/UlyssesWu/TeamCitySharp</RepositoryUrl>
     <PackageReleaseNotes>async for all API</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Configurations>Debug;Release;Dev</Configurations>
+    <Configurations>Debug;Release;Dev;Test</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Test|netstandard2.0|AnyCPU'">
     <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Dev|netstandard2.0|AnyCPU'">
@@ -22,6 +25,9 @@
     <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Test|net6|AnyCPU'">
     <DefineConstants>$(DefineConstants)TRACE;ENABLE_ASYNC</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Dev|net6|AnyCPU'">

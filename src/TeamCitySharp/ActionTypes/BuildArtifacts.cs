@@ -8,6 +8,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using TeamCitySharp.Connection;
 using System.Threading.Tasks;
+using TeamCitySharp.DomainEntities;
+using TeamCitySharp.Locators;
+using File = System.IO.File;
 
 namespace TeamCitySharp.ActionTypes
 {
@@ -28,6 +31,18 @@ namespace TeamCitySharp.ActionTypes
         public async Task DownloadArtifactsByBuildIdAsync(string buildId, Action<string> downloadHandler)
         {
             await m_caller.GetDownloadFormatAsync(downloadHandler, "/downloadArtifacts.html?buildId={0}", false, buildId);
+        }
+
+        public async Task<ArtifactFiles> GetArtifactsAsync(string buildId, string subPath = "")
+        {
+            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"builds/{buildId}/artifacts/children/{subPath}");
+            return artifacts;
+        }
+
+        public async Task<ArtifactFiles> GetArtifactsByLocatorAsync(BuildLocator locator, string subPath = "")
+        {
+            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"builds/{locator}/artifacts/children/{subPath}");
+            return artifacts;
         }
 
         public ArtifactWrapper ByBuildConfigId(string buildConfigId, string param = "")
@@ -387,7 +402,8 @@ namespace TeamCitySharp.ActionTypes
                                 currentUrl = $"{currentUrl}?{m_param}";
                             }
 
-                            await m_caller.GetDownloadFormatAsync(tempFile => File.Move(tempFile, destination), currentUrl, false);
+                            await m_caller.GetDownloadFormatAsync(tempFile => File.Move(tempFile, destination), currentUrl,
+                                false);
                             break;
                         }
                     }

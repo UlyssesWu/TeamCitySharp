@@ -143,7 +143,7 @@ namespace TeamCitySharp.Connection
                 throw new ArgumentException("A download handler must be specified.");
 
             string tempFileName = Path.GetRandomFileName();
-            var url = rest ? CreateUrl(string.Format(urlPart, parts)) : CreateUrl(string.Format(urlPart, parts), false);
+            var url = rest ? CreateUrl(parts.Length == 0? urlPart : string.Format(urlPart, parts)) : CreateUrl(parts.Length == 0 ? urlPart : string.Format(urlPart, parts), false);
 
             try
             {
@@ -225,6 +225,20 @@ namespace TeamCitySharp.Connection
                 return await response.RawTextAsync();
 
             return string.Empty;
+        }
+
+        public async Task<byte[]> GetByteArrayAsync(string href)
+        {
+            if (CheckForAuthRequest())
+                throw new ArgumentException("If you are not acting as a guest you must supply userName and password");
+            if (string.IsNullOrEmpty(href))
+                throw new ArgumentException("Url must be specified");
+
+            bool isFullUrl = href.StartsWith("http:") || href.StartsWith("https:");
+
+            var url = isFullUrl ? href : CreateUrl(href, false);
+
+            return await CreateHttpClient().GetByteArrayAsync(url);
         }
 
         public T Get<T>(string urlPart)
