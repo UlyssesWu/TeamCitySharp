@@ -35,14 +35,24 @@ namespace TeamCitySharp.ActionTypes
 
         public async Task<ArtifactFiles> GetArtifactsAsync(string buildId, string subPath = "")
         {
-            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"builds/{buildId}/artifacts/children/{subPath}");
+            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"/builds/{buildId}/artifacts/children/{subPath}");
             return artifacts;
         }
 
         public async Task<ArtifactFiles> GetArtifactsByLocatorAsync(BuildLocator locator, string subPath = "")
         {
-            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"builds/{locator}/artifacts/children/{subPath}");
+            var artifacts = await m_caller.GetAsync<ArtifactFiles>($"/builds/{locator}/artifacts/children/{subPath}");
             return artifacts;
+        }
+
+        public async Task<byte[]> DownloadArtifactAsync(string href)
+        {
+            return await m_caller.GetByteArrayAsync(href);
+        }
+
+        public async Task<byte[]> DownloadArtifactAsync(ArtifactFile file)
+        {
+            return await m_caller.GetByteArrayAsync(file.Content.Href);
         }
 
         public ArtifactWrapper ByBuildConfigId(string buildConfigId, string param = "")
