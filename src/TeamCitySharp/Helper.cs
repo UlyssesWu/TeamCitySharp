@@ -10,19 +10,19 @@ namespace TeamCitySharp
     {
     }
 
-    /// <summary>
-    /// Parse Teamcity modificationTime
-    /// </summary>
-    public class TeamCityDateTimeConverter : IsoDateTimeConverter
-    {
-        public TeamCityDateTimeConverter()
-        {
-            DateTimeFormat = "yyyyMMdd'T'HHmmsszzz";
-        }
+    ///// <summary>
+    ///// Parse Teamcity modificationTime, which is not need at all (can be handled by Newtonsoft.Json)
+    ///// </summary>
+    //public class TeamCityDateTimeConverter : IsoDateTimeConverter
+    //{
+    //    public TeamCityDateTimeConverter()
+    //    {
+    //        DateTimeFormat = "yyyyMMdd'T'HHmmsszzz";
+    //    }
 
-        public TeamCityDateTimeConverter(string format)
-        {
-            DateTimeFormat = format;
-        }
-    }
+    //    public TeamCityDateTimeConverter(string format)
+    //    {
+    //        DateTimeFormat = format;
+    //    }
+    //}
 }
