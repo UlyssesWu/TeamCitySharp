@@ -24,15 +24,29 @@ namespace TeamCitySharp.ActionTypes
 
         //see: https://www.jetbrains.com/help/teamcity/rest/manage-finished-builds.html#Get+Build+Artifacts
         /// <summary>
-        /// Get Artifacts. Use <see cref="DownloadArtifactAsync(ArtifactFile)"/> to download a <see cref="ArtifactFile"/>.
+        /// Get a build's Artifacts info. Use <see cref="DownloadArtifactAsync(ArtifactFile)"/> to download a <see cref="ArtifactFile"/>.
         /// </summary>
         /// <param name="buildId"></param>
         /// <param name="subPath"></param>
         /// <returns></returns>
         Task<ArtifactFiles> GetArtifactsAsync(string buildId, string subPath = "");
+        /// <summary>
+        /// Get a build's Artifacts info.
+        /// </summary>
+        /// <param name="locator"></param>
+        /// <param name="subPath"></param>
+        /// <returns></returns>
         Task<ArtifactFiles> GetArtifactsByLocatorAsync(BuildLocator locator, string subPath = "");
 
+        /// <summary>
+        /// Download a single artifact
+        /// </summary>
+        /// <param name="href"><see cref="ArtifactContent.Href"/> from <see cref="ArtifactFile.Content"/></param>
+        /// <returns></returns>
         Task<byte[]> DownloadArtifactAsync(string href);
+        /// <summary>
+        /// Download a single artifact
+        /// </summary>
         Task<byte[]> DownloadArtifactAsync(ArtifactFile file);
     }
 }
