@@ -45,14 +45,20 @@ namespace TeamCitySharp.ActionTypes
             return artifacts;
         }
 
+        public async Task<ArtifactFiles> GetArtifactsAsync(ArtifactItem item)
+        {
+            var artifacts = await m_caller.GetAsync<ArtifactFiles>(item.Href, false);
+            return artifacts;
+        }
+
         public async Task<byte[]> DownloadArtifactAsync(string href)
         {
             return await m_caller.GetByteArrayAsync(href);
         }
 
-        public async Task<byte[]> DownloadArtifactAsync(ArtifactFile file)
+        public async Task<byte[]> DownloadArtifactAsync(ArtifactItem item)
         {
-            return await m_caller.GetByteArrayAsync(file.Content.Href);
+            return await m_caller.GetByteArrayAsync(item.Content.Href);
         }
 
         public ArtifactWrapper ByBuildConfigId(string buildConfigId, string param = "")

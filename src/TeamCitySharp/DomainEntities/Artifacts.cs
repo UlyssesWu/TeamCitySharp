@@ -11,12 +11,15 @@ namespace TeamCitySharp.DomainEntities
 
     public class ArtifactFiles
     {
-        [JsonProperty("file")] public ArtifactFile[] File { get; set; }
+        [JsonProperty("file")] public ArtifactItem[] File { get; set; }
         [JsonProperty("count")] public int Count { get; set; }
     }
 
+    /// <summary>
+    /// Can be a file or a folder
+    /// </summary>
     [DebuggerDisplay("{Name,nq}")]
-    public class ArtifactFile
+    public class ArtifactItem
     {
         /// <summary>
         /// Note: This url leads to a metadata json. use <see cref="ArtifactContent.Href"/> for download.
@@ -27,6 +30,7 @@ namespace TeamCitySharp.DomainEntities
         [JsonProperty("modificationTime")]
         public DateTime ModificationTime { get; set; }
         [JsonProperty("content")] public ArtifactContent Content { get; set; }
+        [JsonProperty("children")] public ArtifactItem Children { get; set; }
     }
 
     public class ArtifactContent
