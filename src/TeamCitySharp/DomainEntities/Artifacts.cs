@@ -18,7 +18,7 @@ namespace TeamCitySharp.DomainEntities
     /// <summary>
     /// Can be a file or a folder
     /// </summary>
-    [DebuggerDisplay("{Name,nq}")]
+    [DebuggerDisplay("{Href,nq}")]
     public class ArtifactItem
     {
         /// <summary>
