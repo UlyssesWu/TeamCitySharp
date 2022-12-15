@@ -482,7 +482,7 @@ namespace TeamCitySharp.Connection
             var restUrl = rest ? "/app/rest" : "";
             var version = m_version == "" ? "" : $"/{m_version}";
             var uri = $"{protocol}{m_credentials.HostName}{authType}{restUrl}{version}{urlPart}";
-            return Uri.EscapeUriString(uri).Replace("+", "%2B");
+            return Uri.EscapeDataString(uri).Replace("+", "%2B");
         }
 
         private object GetAuthType()
