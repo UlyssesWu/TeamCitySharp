@@ -2,6 +2,17 @@
 
 * .NET Library to access TeamCity via their REST API.
 
+This fork added these features comparing to [mavezeau/TeamCitySharp](https://github.com/mavezeau/TeamCitySharp):
+
+* **async API** for all existed feature
+* AppServices.Messages: fetch and parse realtime build logs
+* Download artifacts, add/remove comments, add/remove build templates, cancel builds
+* Do not create a HttpClient every time
+
+------
+Original readme:
+
+
 Current Stable Version:
 [![NuGet version (TeamCitySharp-forked-mavezeau)](https://img.shields.io/nuget/v/TeamCitySharp-forked-mavezeau.svg?style=flat-square)](https://www.nuget.org/packages/TeamCitySharp-forked-mavezeau/)
 
